@@ -1,0 +1,219 @@
+import { useEffect, useRef, useState } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
+import HeroImageShell from "./HeroImageShell.jsx";
+import {
+  HERO_PC_MODEL_PATH_FBX,
+  HERO_PC_MODEL_PATH_GLB,
+} from "./heroModelConfig.js";
+
+/* ── constants ─────────────────────────────────────────── */
+
+const HERO_MODEL_TARGET = 2.58;
+const HERO_MODEL_ROTATION_MARGIN = 0.84;
+/** Intended slight scale fudge after fit; was `0.09` by mistake (≈9% scale → tiny model). */
+const HERO_MODEL_EXTRA_SCALE = 1.0;
+const HERO_MODEL_BASE_YAW = 0.32;
+const HERO_SCROLL_YAW_PER_PAGE = Math.PI * 0.78;
+const HERO_SCROLL_TILT_PEAK = 0.14;
+const HERO_SCROLL_SINK = 0.42;
+const HERO_SCROLL_Y_BOB = 0.045;
+
+/* ── helpers ───────────────────────────────────────────── */
+
+/** Centre + uniformly scale `obj` so its largest dimension ≈ TARGET. */
+function fitObjectToBox(obj) {
+  obj.updateWorldMatrix(true, true);
+  const box = new THREE.Box3().setFromObject(obj);
+  const size = box.getSize(new THREE.Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z, 0.001);
+  const s =
+    ((HERO_MODEL_TARGET * HERO_MODEL_ROTATION_MARGIN) / maxDim) *
+    HERO_MODEL_EXTRA_SCALE;
+  obj.scale.setScalar(s);
+  box.setFromObject(obj);
+  const centre = box.getCenter(new THREE.Vector3());
+  obj.position.sub(centre);
+}
+
+/** Load a model (fresh loader per call so FBX/GLB paths stay independent). */
+function loadModel(url, format) {
+  return new Promise((resolve, reject) => {
+    const loader = format === "glb" ? new GLTFLoader() : new FBXLoader();
+    loader.load(
+      url,
+      (result) => resolve(format === "glb" ? result.scene : result),
+      undefined,
+      reject,
+    );
+  });
+}
+
+/* ── inner Three.js components ─────────────────────────── */
+
+function disposeObject3D(obj) {
+  obj.traverse?.((child) => {
+    child.geometry?.dispose();
+    if (child.material) {
+      const mats = Array.isArray(child.material) ? child.material : [child.material];
+      mats.forEach((m) => {
+        Object.values(m).forEach((v) => {
+          if (v instanceof THREE.Texture) v.dispose();
+        });
+        m.dispose?.();
+      });
+    }
+  });
+}
+
+/**
+ * Tries GLB first, then FBX; fits to the frame and drives motion from scroll.
+ */
+function ModelScene({ scrollRef }) {
+  const groupRef = useRef(null);
+  const [scene, setScene] = useState(null);
+  const { invalidate } = useThree();
+
+  /* Load once per mount — `invalidate` identity must not retrigger load. */
+  useEffect(() => {
+    let cancelled = false;
+
+    const candidates = [
+      { url: HERO_PC_MODEL_PATH_GLB, format: "glb" },
+      { url: HERO_PC_MODEL_PATH_FBX, format: "fbx" },
+    ];
+
+    (async () => {
+      for (const { url, format } of candidates) {
+        try {
+          const obj = await loadModel(url, format);
+          if (cancelled) {
+            disposeObject3D(obj);
+            return;
+          }
+          fitObjectToBox(obj);
+          setScene(obj);
+          invalidate();
+          return;
+        } catch {
+          /* try next candidate */
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- load once; invalidate() is stable per canvas
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (scene) disposeObject3D(scene);
+    };
+  }, [scene]);
+
+  /* Scroll-driven motion ───────────────────────────── */
+  useFrame(() => {
+    const g = groupRef.current;
+    if (!g) return;
+    const t = scrollRef.current;
+    g.rotation.y = HERO_MODEL_BASE_YAW + t * HERO_SCROLL_YAW_PER_PAGE;
+    g.rotation.x = Math.sin(t * Math.PI) * HERO_SCROLL_TILT_PEAK;
+    g.position.y =
+      -t * HERO_SCROLL_SINK + Math.sin(t * Math.PI * 2) * HERO_SCROLL_Y_BOB;
+  });
+
+  if (!scene) return null;
+
+  return (
+    <group ref={groupRef}>
+      <primitive object={scene} />
+    </group>
+  );
+}
+
+/* ── outer React component ─────────────────────────────── */
+
+const FRAME_STYLE = {
+  height: "clamp(560px, 78vh, min(92vh, 1080px))",
+  minHeight: "clamp(560px, 78vh, min(92vh, 1080px))",
+};
+
+export default function HeroPCModel() {
+  const scrollRef = useRef(0);
+
+  /* Track page scroll progress (document + visual viewport) ─ */
+  useEffect(() => {
+    const docEl = document.documentElement;
+
+    const readProgress = () => {
+      const scrollTop =
+        window.scrollY ??
+        window.pageYOffset ??
+        docEl.scrollTop ??
+        document.body.scrollTop ??
+        0;
+      const maxScroll = docEl.scrollHeight - docEl.clientHeight;
+      scrollRef.current =
+        maxScroll > 0
+          ? Math.min(1, Math.max(0, scrollTop / maxScroll))
+          : 0;
+    };
+
+    readProgress();
+
+    const opts = { passive: true };
+    window.addEventListener("scroll", readProgress, opts);
+    window.addEventListener("resize", readProgress, opts);
+
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", readProgress, opts);
+    vv?.addEventListener("scroll", readProgress, opts);
+
+    const ro = new ResizeObserver(readProgress);
+    ro.observe(docEl);
+
+    return () => {
+      window.removeEventListener("scroll", readProgress, opts);
+      window.removeEventListener("resize", readProgress, opts);
+      vv?.removeEventListener("resize", readProgress, opts);
+      vv?.removeEventListener("scroll", readProgress, opts);
+      ro.disconnect();
+    };
+  }, []);
+
+  return (
+    <HeroImageShell>
+      <div
+        className="relative w-full min-h-0 touch-pan-y"
+        style={FRAME_STYLE}
+      >
+        <Canvas
+          frameloop="always"
+          camera={{ position: [0, 0, 5.05], fov: 40, near: 1, far: 200 }}
+          className="block h-full w-full"
+          style={{ width: "100%", height: "100%", touchAction: "pan-y" }}
+          dpr={[1, 2]}
+          gl={{
+            alpha: true,
+            antialias: true,
+            powerPreference: "high-performance",
+          }}
+        >
+          <ambientLight intensity={0.62} />
+          <directionalLight position={[8, 10, 6]} intensity={1.05} />
+          <directionalLight
+            position={[-6, 4, -8]}
+            intensity={0.38}
+            color="#c5d8f0"
+          />
+          <hemisphereLight args={["#eef2f6", "#2a2a2a", 0.32]} />
+          <ModelScene scrollRef={scrollRef} />
+        </Canvas>
+      </div>
+    </HeroImageShell>
+  );
+}

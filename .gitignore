@@ -1,0 +1,61 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+build
+out
+*.tsbuildinfo
+
+# Environment & secrets (keep *.example tracked)
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.p12
+
+# Vite / tooling caches
+.vite
+.cache
+.eslintcache
+.turbo
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Tests & coverage
+coverage
+.nyc_output
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors & IDEs
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Optional local databases (dev)
+*.db
+*.sqlite
+*.sqlite3
+
+# Deploy / host metadata (regenerate in CI)
+.vercel
+.netlify

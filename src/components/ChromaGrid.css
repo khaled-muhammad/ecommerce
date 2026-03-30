@@ -1,0 +1,386 @@
+.chroma-grid {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), 320px);
+  grid-auto-rows: auto;
+  justify-content: center;
+  gap: 0.75rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+
+  --x: 50%;
+  --y: 50%;
+  --r: 220px;
+}
+
+/* Full-width bridge — circular brand orbs on shell bg */
+.chroma-grid.chroma-grid--brands {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 168px), 1fr));
+  justify-items: center;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+
+.chroma-grid.chroma-grid--brands .chroma-card.chroma-card--brand {
+  width: min(100%, 200px);
+  max-width: 200px;
+}
+
+@media (max-width: 1124px) {
+  .chroma-grid:not(.chroma-grid--brands) {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 320px));
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .chroma-grid.chroma-grid--brands {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 152px), 1fr));
+    gap: 1.15rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chroma-grid:not(.chroma-grid--brands) {
+    grid-template-columns: 320px;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .chroma-grid.chroma-grid--brands {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chroma-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  height: auto;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #333;
+  transition: border-color 0.3s ease;
+  background: var(--card-gradient);
+
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --spotlight-color: rgba(255, 255, 255, 0.3);
+}
+
+.chroma-card:hover {
+  border-color: var(--card-border);
+}
+
+/* Brand orbs — perfect circles, hairline edge, quiet depth */
+.chroma-card.chroma-card--brand {
+  container-type: size;
+  container-name: chroma-orb;
+
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  box-shadow:
+    inset 0 0 20px -10px color-mix(in srgb, var(--brand-accent, var(--ink)) 20%, transparent),
+    0 1px 2px color-mix(in srgb, var(--ink) 5%, transparent);
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.4s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.chroma-card.chroma-card--brand::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    color-mix(in srgb, var(--brand-accent, var(--ink)) 40%, transparent),
+    transparent 60%
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  animation: chroma-spin 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes chroma-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.chroma-card.chroma-card--brand:hover {
+  background: color-mix(in srgb, var(--brand-accent, var(--ink)) 8%, var(--ink) 4%);
+  border-color: color-mix(in srgb, var(--brand-accent, var(--ink)) 50%, var(--ink) 10%);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--brand-accent, var(--ink)) 25%, transparent),
+    0 24px 48px -12px color-mix(in srgb, var(--ink) 30%, transparent),
+    0 0 30px -5px color-mix(in srgb, var(--brand-accent, var(--ink)) 20%, transparent);
+}
+
+.chroma-card.chroma-card--brand:hover::after {
+  opacity: 1;
+}
+
+.chroma-card.chroma-card--brand:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--brand-accent, var(--ink)) 60%, var(--ink) 20%);
+  outline-offset: 4px;
+}
+
+.chroma-card.chroma-card--brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    60% 60% at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    color-mix(in srgb, var(--brand-accent, var(--ink)) 15%, transparent),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.chroma-card.chroma-card--brand:hover::before {
+  opacity: 1;
+}
+
+.chroma-brand-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 15% 10%;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  transform: translateZ(30px);
+}
+
+.chroma-brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.chroma-brand-logo img {
+  max-height: clamp(2.35rem, 35cqw, 3.85rem);
+  max-width: 88%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  opacity: 0.85;
+  filter: brightness(1.05) contrast(1.05);
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.chroma-card.chroma-card--brand:hover .chroma-brand-logo img {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.chroma-brand-name {
+  margin: 0;
+  max-width: 90%;
+  font-family: var(--site-font, system-ui, sans-serif);
+  font-size: clamp(0.82rem, 5.5cqw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  color: color-mix(in srgb, var(--ink) 85%, transparent);
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.chroma-card.chroma-card--brand:hover .chroma-brand-name {
+  color: var(--ink);
+  text-shadow: 0 0 15px color-mix(in srgb, var(--brand-accent, var(--ink)) 30%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chroma-card.chroma-card--brand {
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .chroma-card.chroma-card--brand:hover {
+    transform: none;
+  }
+
+  .chroma-brand-logo img {
+    transition: opacity 0.15s ease;
+  }
+
+  .chroma-card.chroma-card--brand:hover .chroma-brand-logo img {
+    transform: none;
+  }
+}
+
+@supports not (container-type: size) {
+  .chroma-brand-logo img {
+    max-height: 2.65rem;
+  }
+
+  .chroma-brand-name {
+    font-size: 0.82rem;
+  }
+}
+
+.chroma-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), var(--spotlight-color), transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 2;
+}
+
+.chroma-card:hover::before {
+  opacity: 1;
+}
+
+.chroma-img-wrapper {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 10px;
+  box-sizing: border-box;
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+.chroma-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+
+.chroma-info {
+  position: relative;
+  z-index: 1;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-family: system-ui, sans-serif;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 0.25rem;
+  column-gap: 0.75rem;
+}
+
+.chroma-info .role,
+.chroma-info .handle {
+  color: #aaa;
+}
+
+.chroma-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  backdrop-filter: grayscale(1) brightness(0.78);
+  -webkit-backdrop-filter: grayscale(1) brightness(0.78);
+  background: rgba(0, 0, 0, 0.001);
+
+  mask-image: radial-gradient(
+    circle var(--r) at var(--x) var(--y),
+    transparent 0%,
+    transparent 15%,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.22) 45%,
+    rgba(0, 0, 0, 0.35) 60%,
+    rgba(0, 0, 0, 0.5) 75%,
+    rgba(0, 0, 0, 0.68) 88%,
+    white 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle var(--r) at var(--x) var(--y),
+    transparent 0%,
+    transparent 15%,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.22) 45%,
+    rgba(0, 0, 0, 0.35) 60%,
+    rgba(0, 0, 0, 0.5) 75%,
+    rgba(0, 0, 0, 0.68) 88%,
+    white 100%
+  );
+}
+
+.chroma-fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  backdrop-filter: grayscale(1) brightness(0.78);
+  -webkit-backdrop-filter: grayscale(1) brightness(0.78);
+  background: rgba(0, 0, 0, 0.001);
+
+  mask-image: radial-gradient(
+    circle var(--r) at var(--x) var(--y),
+    white 0%,
+    white 15%,
+    rgba(255, 255, 255, 0.9) 30%,
+    rgba(255, 255, 255, 0.78) 45%,
+    rgba(255, 255, 255, 0.65) 60%,
+    rgba(255, 255, 255, 0.5) 75%,
+    rgba(255, 255, 255, 0.32) 88%,
+    transparent 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle var(--r) at var(--x) var(--y),
+    white 0%,
+    white 15%,
+    rgba(255, 255, 255, 0.9) 30%,
+    rgba(255, 255, 255, 0.78) 45%,
+    rgba(255, 255, 255, 0.65) 60%,
+    rgba(255, 255, 255, 0.5) 75%,
+    rgba(255, 255, 255, 0.32) 88%,
+    transparent 100%
+  );
+
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}

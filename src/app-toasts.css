@@ -1,0 +1,162 @@
+/* Toastify overrides — Roxy shell (paper / ink / Saira), load after ReactToastify.css */
+
+.site-root-vars.roxy-toast-host.Toastify__toast-container {
+  color: transparent;
+  --toastify-z-index: 10050;
+  --toastify-toast-width: min(360px, calc(100vw - 2rem));
+}
+
+.site-root-vars.roxy-toast-host .Toastify__toast {
+  margin-bottom: 0.65rem;
+  padding: 0.875rem 1rem;
+  min-height: 3.25rem;
+  border-radius: 14px;
+  font-family: var(--site-font, "Saira", system-ui, sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  box-shadow: 0 12px 36px -8px color-mix(in srgb, var(--ink) 16%, transparent);
+}
+
+.dark .site-root-vars.roxy-toast-host .Toastify__toast {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent),
+    0 16px 44px -10px rgba(0, 0, 0, 0.5);
+}
+
+.site-root-vars.roxy-toast-host .Toastify__toast-body {
+  padding: 0;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__toast-icon {
+  margin-inline-end: 12px;
+  width: 22px;
+}
+
+/* Success: keep paper card + green accent (not flat bootstrap green) */
+.site-root-vars.roxy-toast-host .Toastify__toast-theme--colored.Toastify__toast--success {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  border-left: 4px solid #22c55e;
+  box-shadow: 0 12px 36px -8px color-mix(in srgb, var(--ink) 16%, transparent);
+}
+
+.dark .site-root-vars.roxy-toast-host .Toastify__toast-theme--colored.Toastify__toast--success {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent),
+    0 16px 44px -10px rgba(0, 0, 0, 0.5);
+}
+
+.site-root-vars.roxy-toast-host .Toastify__toast-icon--success {
+  color: #16a34a;
+}
+
+.dark .site-root-vars.roxy-toast-host .Toastify__toast-icon--success {
+  color: #4ade80;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__toast-theme--light,
+.site-root-vars.roxy-toast-host .Toastify__toast-theme--dark,
+.site-root-vars.roxy-toast-host .Toastify__toast-theme--colored.Toastify__toast--default {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__toast-theme--colored.Toastify__toast--info {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border-left: 4px solid #3b82f6;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__toast-theme--colored.Toastify__toast--warning {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border-left: 4px solid #eab308;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__toast-theme--colored.Toastify__toast--error {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border-left: 4px solid #ef4444;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__toast-icon--info {
+  color: #2563eb;
+}
+
+.dark .site-root-vars.roxy-toast-host .Toastify__toast-icon--info {
+  color: #60a5fa;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__toast-icon--warning {
+  color: #ca8a04;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__toast-icon--error {
+  color: #dc2626;
+}
+
+/* Progress bar — subtle ink tint */
+.site-root-vars.roxy-toast-host .Toastify__progress-bar {
+  height: 3px;
+  border-radius: 0 0 13px 13px;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__progress-bar--success {
+  background: linear-gradient(90deg, #22c55e, #16a34a) !important;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__progress-bar--info {
+  background: linear-gradient(90deg, #3b82f6, #2563eb) !important;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__progress-bar--warning {
+  background: linear-gradient(90deg, #eab308, #ca8a04) !important;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__progress-bar--error {
+  background: linear-gradient(90deg, #f87171, #ef4444) !important;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__progress-bar--default,
+.site-root-vars.roxy-toast-host .Toastify__progress-bar--bg {
+  opacity: 1;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__progress-bar--wrp {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  border-radius: 0 0 13px 13px;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__progress-bar--default {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ink) 35%, transparent),
+    color-mix(in srgb, var(--ink) 55%, transparent)
+  ) !important;
+}
+
+/* Close control */
+.site-root-vars.roxy-toast-host .Toastify__close-button {
+  color: var(--ink);
+  opacity: 0.4;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.site-root-vars.roxy-toast-host .Toastify__close-button:hover,
+.site-root-vars.roxy-toast-host .Toastify__close-button:focus {
+  opacity: 0.85;
+}
+
+@media (max-width: 480px) {
+  .site-root-vars.roxy-toast-host .Toastify__toast {
+    border-radius: 14px;
+    margin-bottom: 0.5rem;
+  }
+}

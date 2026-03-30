@@ -1,0 +1,206 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+/* Landing theme (scoped under .landing-home) — colors from index.css :root / .dark */
+.landing-home {
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--vexo-text);
+  overflow-x: hidden;
+}
+
+.landing-home .text-vexo-text {
+  color: var(--vexo-text);
+}
+.landing-home .text-vexo-text-secondary {
+  color: var(--vexo-text-secondary);
+}
+.landing-home .text-vexo-text-muted {
+  color: var(--vexo-text-muted);
+}
+.landing-home .bg-vexo-bg {
+  background-color: var(--vexo-bg);
+}
+.landing-home .bg-vexo-card {
+  background-color: var(--vexo-card);
+}
+.landing-home .text-vexo-dark {
+  color: var(--vexo-dark);
+}
+.landing-home .bg-vexo-dark {
+  background-color: var(--vexo-dark);
+}
+.landing-home .border-vexo-dark {
+  border-color: var(--vexo-dark);
+}
+
+.landing-home .text-balance {
+  text-wrap: balance;
+}
+
+.landing-home .scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.landing-home .scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.landing-home .watermark-text {
+  font-size: clamp(80px, 15vw, 180px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  font-weight: 900;
+  color: var(--vexo-watermark);
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+}
+
+.landing-home .hero-gradient {
+  background: linear-gradient(180deg, var(--vexo-bg) 0%, var(--vexo-elevated) 100%);
+}
+
+/* Full-viewport hero: top inset scales with screen + notch; clears fixed shell nav without layout padding */
+.landing-home .landing-hero-screen {
+  box-sizing: border-box;
+  min-height: 100svh;
+  min-height: 100dvh;
+  padding-top: max(env(safe-area-inset-top, 0px), clamp(4.5rem, 14svh, 7.5rem));
+}
+
+.landing-home .section-bg {
+  background-color: var(--vexo-elevated);
+}
+
+.landing-home .img-zoom {
+  overflow: hidden;
+}
+
+.landing-home .img-zoom img {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.landing-home .img-zoom:hover img {
+  transform: scale(1.05);
+}
+
+.landing-home .btn-primary {
+  background-color: var(--vexo-btn-primary-bg);
+  color: var(--vexo-btn-primary-fg);
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border: none;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.landing-home .btn-primary:hover {
+  transform: scale(1.02);
+  box-shadow:
+    0 10px 15px -3px color-mix(in srgb, var(--vexo-btn-primary-bg) 18%, transparent),
+    0 4px 6px -4px color-mix(in srgb, var(--vexo-btn-primary-bg) 12%, transparent);
+}
+
+/* Inside BorderGlow — shell carries fill; link stays text + padding only */
+.landing-home .btn-primary.btn-primary--glow,
+.landing-home .btn-primary.btn-primary--glow:hover {
+  background-color: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.landing-home .btn-secondary {
+  background: transparent;
+  border: 1px solid var(--vexo-btn-secondary-border);
+  color: var(--vexo-btn-secondary-fg);
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.landing-home .btn-secondary:hover {
+  background-color: var(--vexo-btn-secondary-hover-bg);
+  color: var(--vexo-btn-secondary-hover-fg);
+}
+
+.landing-home .btn-secondary.btn-secondary--glow {
+  border-color: transparent;
+  background: transparent;
+}
+
+.landing-home .btn-secondary.btn-secondary--glow:hover {
+  background-color: transparent;
+  /* No inverted fill on glow shell — keep label color (hover-fg is for solid hover-bg) */
+  color: var(--vexo-btn-secondary-fg);
+}
+
+.landing-home .card-hover {
+  transition: transform 0.3s ease;
+}
+
+.landing-home .card-hover:hover {
+  transform: scale(1.02);
+}
+
+@keyframes landing-marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.landing-home .animate-marquee {
+  animation: landing-marquee 30s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-home .animate-marquee {
+    animation: none;
+  }
+
+  .landing-home .img-zoom img {
+    transition: none;
+  }
+
+  .landing-home .btn-primary:hover,
+  .landing-home .card-hover:hover {
+    transform: none;
+  }
+}
+
+/* Primary CTA uses a light surface in .dark — soft-light / plus-lighter wash out on pale bg */
+.dark .landing-home .border-glow-card.border-glow-card--pill.border-glow-card--primary-fill::after {
+  mix-blend-mode: multiply;
+}
+
+.dark .landing-home .border-glow-card.border-glow-card--pill.border-glow-card--primary-fill > .edge-light {
+  mix-blend-mode: normal;
+}
+
+/* Full-viewport bleed inside the centered shell column */
+.landing-home .laser-reveal-section {
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-home .laser-reveal-section .laser-flow-container {
+    visibility: hidden;
+  }
+}

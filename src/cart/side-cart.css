@@ -1,0 +1,69 @@
+/* Side cart drawer — matches site shell paper/ink, light + .dark */
+
+.side-cart-backdrop {
+  animation: side-cart-backdrop-in 0.28s ease forwards;
+  background: color-mix(in srgb, var(--ink) 38%, transparent);
+}
+
+.dark .side-cart-backdrop {
+  background: color-mix(in srgb, #000 62%, transparent);
+}
+
+.side-cart-panel {
+  animation: side-cart-panel-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  background: var(--paper);
+  box-shadow:
+    -24px 0 48px -12px color-mix(in srgb, var(--ink) 18%, transparent),
+    -1px 0 0 color-mix(in srgb, var(--ink) 10%, transparent);
+}
+
+.dark .side-cart-panel {
+  box-shadow:
+    -28px 0 56px -14px rgba(0, 0, 0, 0.55),
+    -1px 0 0 color-mix(in srgb, var(--ink) 14%, transparent);
+}
+
+@keyframes side-cart-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes side-cart-panel-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0.94;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.side-cart-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.side-cart-close:hover {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.side-cart-close:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--ink) 35%, var(--paper));
+  outline-offset: 2px;
+}
