@@ -1,0 +1,316 @@
+[
+  {
+    "slug": "nvidia-rtx-4090",
+    "name": "NVIDIA GeForce RTX 4090",
+    "categorySlug": "gpus",
+    "brandSlug": "nvidia",
+    "priceCents": 159999,
+    "compareAtCents": null,
+    "shortDescription": "Flagship GPU with 24 GB GDDR6X — best 4K gaming and content creation.",
+    "description": "Ada Lovelace with DLSS 3, ray tracing, and 24 GB memory for the most demanding titles.",
+    "specs": {
+      "TDP": "450W",
+      "CUDA": "16384",
+      "VRAM": "24 GB GDDR6X",
+      "Boost": "2520 MHz"
+    },
+    "stock": 8,
+    "image": "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&auto=format&fit=crop&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&auto=format&fit=crop&q=80"
+    ],
+    "badge": "Premium",
+    "featuredRank": 3,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.257Z",
+    "updatedAt": "2026-03-28T23:36:32.257Z"
+  },
+  {
+    "slug": "msi-rtx-4070-ti-super",
+    "name": "MSI RTX 4070 Ti SUPER",
+    "categorySlug": "gpus",
+    "brandSlug": "msi",
+    "priceCents": 79999,
+    "compareAtCents": null,
+    "shortDescription": "Sweet-spot 1440p gaming with 16 GB VRAM.",
+    "description": "Great value for high-refresh 1440p gaming with DLSS 3 frame generation.",
+    "specs": {
+      "TDP": "285W",
+      "CUDA": "8448",
+      "VRAM": "16 GB GDDR6X",
+      "Boost": "2610 MHz"
+    },
+    "stock": 18,
+    "image": "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&auto=format&fit=crop&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&auto=format&fit=crop&q=80"
+    ],
+    "badge": null,
+    "featuredRank": 4,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.259Z",
+    "updatedAt": "2026-03-28T23:36:32.259Z"
+  },
+  {
+    "slug": "corsair-rm1000x",
+    "name": "Corsair RM1000x",
+    "categorySlug": "psu",
+    "brandSlug": "corsair",
+    "priceCents": 18999,
+    "compareAtCents": null,
+    "shortDescription": "1000W 80+ Gold fully modular — quiet and reliable.",
+    "description": "Premium fully modular PSU with zero-RPM fan mode and 10-year warranty.",
+    "specs": {
+      "Modular": "Fully",
+      "Wattage": "1000W",
+      "Warranty": "10 years",
+      "Efficiency": "80+ Gold"
+    },
+    "stock": 12,
+    "image": "https://images.unsplash.com/photo-1625842268584-8f3296236761?w=800&auto=format&fit=crop&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1625842268584-8f3296236761?w=800&auto=format&fit=crop&q=80"
+    ],
+    "badge": null,
+    "featuredRank": 7,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.264Z",
+    "updatedAt": "2026-03-28T23:36:32.264Z"
+  },
+  {
+    "slug": "asus-rog-strix-b650e",
+    "name": "ASUS ROG Strix B650E-F",
+    "categorySlug": "motherboards",
+    "brandSlug": "asus",
+    "priceCents": 29999,
+    "compareAtCents": null,
+    "shortDescription": "AM5 ATX with PCIe 5.0, DDR5, and robust VRM for overclocking.",
+    "description": "Feature-rich AM5 board with Wi-Fi 6E, USB4, and premium audio.",
+    "specs": {
+      "Form": "ATX",
+      "Memory": "DDR5 up to 6400",
+      "Socket": "AM5",
+      "Chipset": "B650E"
+    },
+    "stock": 10,
+    "image": "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=800&auto=format&fit=crop&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=800&auto=format&fit=crop&q=80"
+    ],
+    "badge": null,
+    "featuredRank": 8,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.266Z",
+    "updatedAt": "2026-03-28T23:36:32.266Z"
+  },
+  {
+    "slug": "corsair-4000d-airflow",
+    "name": "Corsair 4000D Airflow",
+    "categorySlug": "cases",
+    "brandSlug": "corsair",
+    "priceCents": 10499,
+    "compareAtCents": null,
+    "shortDescription": "Mid-tower with perforated front panel — maximum airflow.",
+    "description": "Clean aesthetic with room for 360mm radiators and excellent cable management.",
+    "specs": {
+      "GPU": "400mm max",
+      "Fans": "Up to 6x 120mm",
+      "Form": "Mid-tower ATX",
+      "Radiator": "360mm top/front"
+    },
+    "stock": 14,
+    "image": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=800&auto=format&fit=crop&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=800&auto=format&fit=crop&q=80"
+    ],
+    "badge": null,
+    "featuredRank": 10,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.270Z",
+    "updatedAt": "2026-03-28T23:36:32.270Z"
+  },
+  {
+    "slug": "gigabyte-rtx-4070-windforce",
+    "name": "Gigabyte RTX 4070 Windforce",
+    "categorySlug": "gpus",
+    "brandSlug": "gigabyte",
+    "priceCents": 54999,
+    "compareAtCents": null,
+    "shortDescription": "12 GB 1440p performer with efficient WINDFORCE cooling.",
+    "description": "Good value for 1440p gaming with DLSS 3 support.",
+    "specs": {
+      "TDP": "200W",
+      "CUDA": "5888",
+      "VRAM": "12 GB GDDR6X",
+      "Boost": "2475 MHz"
+    },
+    "stock": 5,
+    "image": "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&auto=format&fit=crop&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&auto=format&fit=crop&q=80"
+    ],
+    "badge": null,
+    "featuredRank": 0,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.273Z",
+    "updatedAt": "2026-03-28T23:36:32.273Z"
+  },
+  {
+    "slug": "noctua-nh-d15",
+    "name": "Noctua NH-D15",
+    "categorySlug": "cooling",
+    "brandSlug": "noctua",
+    "priceCents": 10999,
+    "compareAtCents": null,
+    "shortDescription": "Dual-tower air cooler — near-AIO performance in silence.",
+    "description": "Iconic cooler with two NF-A15 fans and SecuFirm2 mounting for all platforms.",
+    "specs": {
+      "TDP": "250W",
+      "Fans": "2x NF-A15",
+      "Type": "Dual-tower air",
+      "Noise": "24.6 dB(A)"
+    },
+    "stock": 20,
+    "image": "https://www.noctua.at/_next/image?url=https%3A%2F%2Fcdn.noctua.at%2Fmedia%2Fnh_d15_1.jpg&w=640&q=75",
+    "images": [
+      "https://www.noctua.at/_next/image?url=https%3A%2F%2Fcdn.noctua.at%2Fmedia%2Fnh_d15_1.jpg&w=640&q=75"
+    ],
+    "badge": null,
+    "featuredRank": 9,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.269Z",
+    "updatedAt": "2026-03-29T22:59:27.762Z"
+  },
+  {
+    "slug": "samsung-990-pro-2tb",
+    "name": "Samsung 990 PRO 2 TB",
+    "categorySlug": "storage",
+    "brandSlug": "samsung",
+    "priceCents": 17999,
+    "compareAtCents": null,
+    "shortDescription": "PCIe 4.0 NVMe SSD — 7450 MB/s read, built for heavy workloads.",
+    "description": "Flagship NVMe with power-efficient controller and sustained write performance.",
+    "specs": {
+      "Read": "7450 MB/s",
+      "Write": "6900 MB/s",
+      "Capacity": "2 TB",
+      "Interface": "PCIe 4.0 x4 NVMe"
+    },
+    "stock": 25,
+    "image": "https://m.media-amazon.com/images/I/71MMjbtJNtL._AC_UF350,350_QL80_.jpg",
+    "images": [
+      "https://m.media-amazon.com/images/I/71MMjbtJNtL._AC_UF350,350_QL80_.jpg"
+    ],
+    "badge": null,
+    "featuredRank": 6,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.263Z",
+    "updatedAt": "2026-03-29T23:01:02.751Z"
+  },
+  {
+    "slug": "corsair-ddr5-32gb",
+    "name": "Corsair Vengeance DDR5 32 GB",
+    "categorySlug": "ram",
+    "brandSlug": "corsair",
+    "priceCents": 11999,
+    "compareAtCents": null,
+    "shortDescription": "32 GB (2x16) DDR5-6000 CL30 — excellent for AM5 builds.",
+    "description": "Low-latency DDR5 kit with custom heatspreader for reliable high-speed operation.",
+    "specs": {
+      "Speed": "DDR5-6000",
+      "Latency": "CL30",
+      "Voltage": "1.35V",
+      "Capacity": "32 GB (2x16)"
+    },
+    "stock": 30,
+    "image": "https://m.media-amazon.com/images/I/61D2DDpDITL.jpg",
+    "images": [
+      "https://m.media-amazon.com/images/I/61D2DDpDITL.jpg"
+    ],
+    "badge": null,
+    "featuredRank": 5,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.261Z",
+    "updatedAt": "2026-03-29T23:01:28.659Z"
+  },
+  {
+    "slug": "intel-core-i7-14700k",
+    "name": "Intel Core i7-14700K",
+    "categorySlug": "cpus",
+    "brandSlug": "intel",
+    "priceCents": 34999,
+    "compareAtCents": null,
+    "shortDescription": "Hybrid architecture — strong all-rounder for work and play.",
+    "description": "Performance and Efficient cores give you flexibility for streaming, compiling, and gaming.",
+    "specs": {
+      "TDP": "125W",
+      "Cores": "20 (8P + 12E)",
+      "Socket": "LGA1700",
+      "Threads": "28",
+      "P-core boost": "up to 5.6 GHz"
+    },
+    "stock": 15,
+    "image": "https://m.media-amazon.com/images/I/51C7FODM0EL._AC_UF350,350_QL80_.jpg",
+    "images": [
+      "https://m.media-amazon.com/images/I/51C7FODM0EL._AC_UF350,350_QL80_.jpg"
+    ],
+    "badge": null,
+    "featuredRank": 2,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.251Z",
+    "updatedAt": "2026-03-29T23:02:05.385Z"
+  },
+  {
+    "slug": "amd-ryzen-7-7800x3d",
+    "name": "AMD Ryzen 7 7800X3D",
+    "categorySlug": "cpus",
+    "brandSlug": "amd",
+    "priceCents": 38499,
+    "compareAtCents": 42999,
+    "shortDescription": "8C/16T gaming CPU with 3D V-Cache — top pick for high-FPS titles.",
+    "description": "Zen 4 architecture with stacked L3 for exceptional frame times in CPU-bound games.",
+    "specs": {
+      "TDP": "120W",
+      "Cores": "8",
+      "Socket": "AM5",
+      "Threads": "16",
+      "Base/boost": "4.2 / 5.0 GHz"
+    },
+    "stock": 22,
+    "image": "https://m.media-amazon.com/images/I/51HqC0rU9HL._AC_UF894,1000_QL80_.jpg",
+    "images": [
+      "https://m.media-amazon.com/images/I/51HqC0rU9HL._AC_UF894,1000_QL80_.jpg"
+    ],
+    "badge": "Best seller",
+    "featuredRank": 1,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.249Z",
+    "updatedAt": "2026-03-29T23:02:33.682Z"
+  },
+  {
+    "slug": "wd-black-sn850x-1tb",
+    "name": "WD Black SN850X 1 TB",
+    "categorySlug": "storage",
+    "brandSlug": null,
+    "priceCents": 8999,
+    "compareAtCents": 10999,
+    "shortDescription": "PCIe 4.0 gaming SSD — 7300 MB/s read.",
+    "description": "WD's gaming-focused NVMe with出色的散热设计.",
+    "specs": {
+      "Read": "7300 MB/s",
+      "Write": "6600 MB/s",
+      "Capacity": "1 TB",
+      "Interface": "PCIe 4.0 x4"
+    },
+    "stock": 0,
+    "image": "https://cdn.mos.cms.futurecdn.net/XznGAj929i82MWrAHPH4Eo-2000-80.jpg",
+    "images": [
+      "https://cdn.mos.cms.futurecdn.net/XznGAj929i82MWrAHPH4Eo-2000-80.jpg"
+    ],
+    "badge": "Sale",
+    "featuredRank": 0,
+    "isActive": true,
+    "createdAt": "2026-03-28T23:36:32.272Z",
+    "updatedAt": "2026-03-29T23:03:12.160Z"
+  }
+]

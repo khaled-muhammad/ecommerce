@@ -345,13 +345,26 @@ export default function AdminProductModal({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 fixed inset-0 z-[220] bg-[color:color-mix(in_srgb,#0a1a0a_52%,transparent)] backdrop-blur-md" />
-        <Dialog.Content
+        <Dialog.Overlay
           className={cn(
-            "site-root-vars data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-[99] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-[99] fixed left-1/2 top-1/2 z-[221] flex max-h-[min(92dvh,900px)] w-[min(calc(100vw-1rem),1040px)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[1.75rem] border border-[color:color-mix(in_srgb,var(--ink)_14%,transparent)] bg-[color:color-mix(in_srgb,var(--paper)_96%,var(--ink)_2%)] shadow-[0_32px_90px_rgba(14,34,14,0.2),0_0_0_1px_rgba(255,255,255,0.5)_inset] outline-none duration-200 md:flex-row",
+            "fixed inset-0 z-[220] bg-[color:color-mix(in_srgb,#0a1a0a_52%,transparent)] backdrop-blur-sm",
+            "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            "duration-200 ease-out",
           )}
+        />
+        <Dialog.Content
+          className="group fixed inset-0 z-[221] flex items-center justify-center p-2 outline-none sm:p-4 pointer-events-none"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
+          <div
+            className={cn(
+              "site-root-vars pointer-events-auto flex max-h-[min(92dvh,900px)] w-[min(calc(100vw-1rem),1040px)] flex-col overflow-hidden rounded-[1.75rem] border border-[color:color-mix(in_srgb,var(--ink)_14%,transparent)] bg-[color:color-mix(in_srgb,var(--paper)_96%,var(--ink)_2%)] shadow-[0_32px_90px_rgba(14,34,14,0.2),0_0_0_1px_rgba(255,255,255,0.5)_inset] md:flex-row",
+              "duration-200 ease-out",
+              "group-data-[state=open]:animate-in group-data-[state=closed]:animate-out",
+              "group-data-[state=closed]:fade-out-0 group-data-[state=open]:fade-in-0",
+              "group-data-[state=closed]:zoom-out-95 group-data-[state=open]:zoom-in-95",
+            )}
+          >
           <Dialog.Title className="sr-only">{editProductId ? "Edit product" : "Create product"}</Dialog.Title>
           <Dialog.Description className="sr-only">
             Guided editor: basics, specifications, images, then review before saving.
@@ -796,6 +809,7 @@ export default function AdminProductModal({
                 </div>
               </div>
             </footer>
+          </div>
           </div>
         </Dialog.Content>
       </Dialog.Portal>
