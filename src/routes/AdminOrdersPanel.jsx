@@ -467,7 +467,11 @@ export default function AdminOrdersPanel({ authorizedFetch, role }) {
 
               {/* Order Status & Notes Card */}
               <div className={cardStyle}>
-                <SectionHeader icon={Box} title="Order Management" />
+                <SectionHeader
+                  icon={Box}
+                  title="Order management"
+                  sub="Admins, managers, fulfillment, and support can update status within the rules below. Refunds use the separate Stripe flow when applicable."
+                />
                 <form id="order-actions-form" className="mt-4 space-y-4" onSubmit={saveOrder}>
                   {canFulfill ? (
                     <div className="space-y-1.5">

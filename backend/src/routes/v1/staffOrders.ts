@@ -20,7 +20,8 @@ import { getStripeOrNull } from "../../lib/stripeAdmin.js";
 const router = Router();
 
 const ORDER_VIEW = new Set(["admin", "manager", "fulfillment", "support", "analyst"]);
-const ORDER_FULFILL = new Set(["admin", "manager", "fulfillment"]);
+/** Status updates (prepare, ship, deliver, cancel): ops + support for CS-driven updates */
+const ORDER_FULFILL = new Set(["admin", "manager", "fulfillment", "support"]);
 const ORDER_REFUND = new Set(["admin", "manager", "support"]);
 
 function requireOrderView(req: Request, res: Response, next: NextFunction): void {

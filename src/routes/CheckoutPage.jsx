@@ -205,7 +205,10 @@ export default function CheckoutPage() {
       }
       if (data?.paymentMethod === "cod" && data?.order?.orderNumber) {
         clearCart();
-        navigate(`/checkout/complete?order=${encodeURIComponent(data.order.orderNumber)}`, { replace: true });
+        navigate(
+          `/checkout/complete?order=${encodeURIComponent(data.order.orderNumber)}&payment=cod`,
+          { replace: true },
+        );
         return;
       }
       const url = data?.checkoutUrl;

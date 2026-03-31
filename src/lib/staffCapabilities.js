@@ -16,7 +16,7 @@ const CATALOG_ADMIN = new Set(["admin"]);
 const STORE_SETTINGS = new Set(["admin", "manager"]);
 
 const ORDER_VIEW = new Set(["admin", "manager", "fulfillment", "support", "analyst"]);
-const ORDER_FULFILL = new Set(["admin", "manager", "fulfillment"]);
+const ORDER_FULFILL = new Set(["admin", "manager", "fulfillment", "support"]);
 const ORDER_REFUND = new Set(["admin", "manager", "support"]);
 
 const STAFF_PORTAL_ROLES = new Set(["fulfillment", "content_editor"]);
