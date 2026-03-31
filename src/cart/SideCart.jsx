@@ -9,6 +9,7 @@ import { useCartLines, useCartSubtotalCents } from "./cart-selectors.js";
 import "./side-cart.css";
 
 export default function SideCart() {
+  const { user, loading: authLoading } = useAuth();
   const { sideCartOpen, closeSideCart, setQuantity, removeItem } = useCart();
   const lines = useCartLines();
   const subtotal = useCartSubtotalCents();
