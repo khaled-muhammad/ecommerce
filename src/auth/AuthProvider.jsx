@@ -155,7 +155,11 @@ export function AuthProvider({ children }) {
     async (path, init = {}) => {
       const run = (token) => {
         const headers = new Headers(init.headers);
-        if (init.body != null && !headers.has("Content-Type")) {
+        if (
+          init.body != null &&
+          !(init.body instanceof FormData) &&
+          !headers.has("Content-Type")
+        ) {
           headers.set("Content-Type", "application/json");
         }
         headers.set("Authorization", `Bearer ${token}`);

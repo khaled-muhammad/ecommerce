@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../auth/useAuth.js";
 import { formatUsd } from "../lib/money.js";
+import AdminImageUrlField from "../components/AdminImageUrlField.jsx";
 import AdminProductModal from "./AdminProductModal.jsx";
 
 const field =
@@ -320,10 +321,15 @@ export default function AdminCatalogPanel() {
                 Description
                 <textarea className={`${field} mt-1 min-h-[72px]`} value={catForm.description} onChange={(e) => setCatForm((f) => ({ ...f, description: e.target.value }))} />
               </label>
-              <label className="text-xs font-semibold uppercase tracking-wider text-[color:color-mix(in_srgb,var(--ink)_45%,transparent)]">
-                Image URL
-                <input className={`${field} mt-1`} value={catForm.image} onChange={(e) => setCatForm((f) => ({ ...f, image: e.target.value }))} />
-              </label>
+              <div>
+                <AdminImageUrlField
+                  label="Image URL or upload"
+                  value={catForm.image}
+                  onChange={(v) => setCatForm((f) => ({ ...f, image: v }))}
+                  authorizedFetch={authorizedFetch}
+                  inputClassName={`${field} mt-1`}
+                />
+              </div>
               <label className="text-xs font-semibold uppercase tracking-wider text-[color:color-mix(in_srgb,var(--ink)_45%,transparent)]">
                 Sort order
                 <input
@@ -398,10 +404,15 @@ export default function AdminCatalogPanel() {
                 Slug
                 <input className={`${field} mt-1`} value={brandForm.slug} onChange={(e) => setBrandForm((f) => ({ ...f, slug: e.target.value }))} required />
               </label>
-              <label className="text-xs font-semibold uppercase tracking-wider text-[color:color-mix(in_srgb,var(--ink)_45%,transparent)]">
-                Logo URL
-                <input className={`${field} mt-1`} value={brandForm.logo} onChange={(e) => setBrandForm((f) => ({ ...f, logo: e.target.value }))} />
-              </label>
+              <div>
+                <AdminImageUrlField
+                  label="Logo URL or upload"
+                  value={brandForm.logo}
+                  onChange={(v) => setBrandForm((f) => ({ ...f, logo: v }))}
+                  authorizedFetch={authorizedFetch}
+                  inputClassName={`${field} mt-1`}
+                />
+              </div>
               <label className="text-xs font-semibold uppercase tracking-wider text-[color:color-mix(in_srgb,var(--ink)_45%,transparent)]">
                 Website
                 <input className={`${field} mt-1`} value={brandForm.website} onChange={(e) => setBrandForm((f) => ({ ...f, website: e.target.value }))} placeholder="https://…" />

@@ -4,6 +4,7 @@ import { Dialog } from "radix-ui";
 import { ChevronLeft, ChevronRight, ClipboardList, ImageIcon, Loader2, Package, Plus, Sparkles, Trash2, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { formatUsd } from "../lib/money.js";
+import AdminImageUrlField from "../components/AdminImageUrlField.jsx";
 import {
   formPartsToSpecs,
   getCategorySpecBlueprint,
@@ -59,7 +60,9 @@ function LiveImagePreview({ url, variant = "hero" }) {
         )}
       >
         <ImageIcon className={variant === "hero" ? "h-8 w-8 opacity-40" : "h-5 w-5 opacity-40"} strokeWidth={1.5} />
-        {variant === "hero" ? <span>{trimmed && failed ? "Could not load image" : "Paste a URL to preview"}</span> : null}
+        {variant === "hero" ? (
+          <span>{trimmed && failed ? "Could not load image" : "Paste a URL or upload in the field"}</span>
+        ) : null}
       </div>
     );
   }
@@ -638,10 +641,13 @@ export default function AdminProductModal({
                     <div className="grid gap-8 lg:grid-cols-[1fr_1.05fr] lg:items-start">
                       <div className="lg:sticky lg:top-0">
                         <SectionCard title="Hero preview" subtitle="Main image on listings and at the top of the product page.">
-                          <label className="block">
-                            <FieldLabel>Primary image URL</FieldLabel>
-                            <input className={inputBase} value={image} onChange={(e) => setImage(e.target.value)} placeholder="https://…" />
-                          </label>
+                          <AdminImageUrlField
+                            label="Primary image"
+                            value={image}
+                            onChange={setImage}
+                            authorizedFetch={authorizedFetch}
+                            inputClassName={inputBase}
+                          />
                           <div className="mt-5">
                             <LiveImagePreview url={image} variant="hero" />
                           </div>
@@ -653,7 +659,13 @@ export default function AdminProductModal({
                             <div key={i} className="flex gap-3 rounded-xl border border-[color:color-mix(in_srgb,var(--ink)_10%,transparent)] bg-[color:color-mix(in_srgb,var(--paper)_96%,var(--ink)_1%)] p-3">
                               <LiveImagePreview url={u} variant="thumb" />
                               <div className="flex min-w-0 flex-1 flex-col gap-2">
-                                <input className={inputBase} value={u} onChange={(e) => setGalleryAt(i, e.target.value)} placeholder="Image URL" />
+                                <AdminImageUrlField
+                                  value={u}
+                                  onChange={(v) => setGalleryAt(i, v)}
+                                  authorizedFetch={authorizedFetch}
+                                  inputClassName={inputBase}
+                                  placeholder="Gallery image URL"
+                                />
                               </div>
                               <button
                                 type="button"

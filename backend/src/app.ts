@@ -1,10 +1,11 @@
+import path from "node:path";
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import { pinoHttp } from "pino-http";
-import { env } from "./config/env.js";
+import { backendRoot, env } from "./config/env.js";
 import { logger } from "./config/logger.js";
 import { requestId } from "./middleware/requestId.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -60,6 +61,15 @@ app.post(
   "/api/v1/checkout/webhook",
   express.raw({ type: "application/json" }),
   handleStripeWebhook,
+);
+
+// Locally uploaded catalog images (fallback when S3 / Hack Club CDN unset)
+app.use(
+  "/uploads",
+  express.static(path.join(backendRoot, "uploads"), {
+    maxAge: env.NODE_ENV === "production" ? "7d" : 0,
+    fallthrough: false,
+  }),
 );
 
 // JSON body - limit to prevent abuse

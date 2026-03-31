@@ -1,10 +1,12 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
+import multer from "multer";
 import { z } from "zod";
 import { eq, and, or, ilike, sql, desc, asc, getTableColumns } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { categories, brands, products } from "../../db/schema/catalog.js";
 import { requireAuth } from "../../middleware/auth.js";
 import { mayAccessStaffCapability } from "../../lib/storeOwnerAccess.js";
+import { uploadMediaFile } from "../../services/mediaUpload.js";
 
 const router = Router();
 
@@ -20,6 +22,18 @@ function requireCatalogAdmin(req: Request, res: Response, next: NextFunction): v
 }
 
 const uuidParam = z.string().uuid();
+
+const catalogImageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 12 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      cb(new Error("Only image files are allowed"));
+      return;
+    }
+    cb(null, true);
+  },
+});
 
 // ── Categories ──
 
@@ -390,5 +404,24 @@ router.patch("/products/:id", requireAuth, requireCatalogAdmin, async (req, res,
     next(err);
   }
 });
+
+router.post(
+  "/upload",
+  requireAuth,
+  requireCatalogAdmin,
+  catalogImageUpload.single("file"),
+  async (req, res, next) => {
+    try {
+      if (!req.file) {
+        res.status(400).json({ error: "BAD_REQUEST", message: "Missing file (use multipart field name: file)" });
+        return;
+      }
+      const { url } = await uploadMediaFile(req.file, req);
+      res.json({ url });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 
 export default router;

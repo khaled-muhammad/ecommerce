@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import { z } from "zod";
 
 /** Backend package root (contains `.env`), stable regardless of `process.cwd()`. */
-const backendRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+export const backendRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
@@ -30,6 +30,12 @@ const envSchema = z.object({
   S3_ACCESS_KEY: z.string().optional().default(""),
   S3_SECRET_KEY: z.string().optional().default(""),
   S3_REGION: z.string().optional().default("us-east-1"),
+  /** Optional public base for object URLs (e.g. CloudFront). If empty, derived from bucket/region or S3_ENDPOINT. */
+  S3_PUBLIC_BASE_URL: z.string().optional().default(""),
+  HACKCLUB_CDN_BEARER: z.string().optional().default(""),
+  HACKCLUB_CDN_KEY: z.string().optional().default(""),
+  /** Optional absolute base for local disk upload URLs (no trailing slash). If empty, derived from each upload request. */
+  UPLOAD_PUBLIC_BASE_URL: z.string().optional().default(""),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -51,6 +51,9 @@ Desktop.ini
 *.sln
 *.sw?
 
+# Local disk uploads (catalog admin fallback)
+backend/uploads
+
 # Optional local databases (dev)
 *.db
 *.sqlite
