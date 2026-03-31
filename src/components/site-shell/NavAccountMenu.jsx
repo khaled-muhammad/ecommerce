@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, LogOut, UserRound } from "lucide-react";
+import { Heart, LayoutDashboard, LogOut, Package, UserRound } from "lucide-react";
 import { useAuth } from "../../auth/useAuth.js";
 import { hasStaffDashboardAccess } from "../../lib/staffCapabilities.js";
 
@@ -96,6 +96,24 @@ export default function NavAccountMenu({ displayName, email }) {
         >
           <UserRound className="h-4 w-4 shrink-0 opacity-80" strokeWidth={2} aria-hidden />
           Profile
+        </NavLink>
+        <NavLink
+          to="/orders"
+          role="menuitem"
+          className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium text-[color:var(--ink)] transition-colors hover:bg-[color:color-mix(in_srgb,var(--ink)_8%,transparent)]"
+          onClick={() => setOpen(false)}
+        >
+          <Package className="h-4 w-4 shrink-0 opacity-80" strokeWidth={2} aria-hidden />
+          Orders
+        </NavLink>
+        <NavLink
+          to="/favorites"
+          role="menuitem"
+          className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium text-[color:var(--ink)] transition-colors hover:bg-[color:color-mix(in_srgb,var(--ink)_8%,transparent)]"
+          onClick={() => setOpen(false)}
+        >
+          <Heart className="h-4 w-4 shrink-0 opacity-80" strokeWidth={2} aria-hidden />
+          Favorites
         </NavLink>
         {showAdmin ? (
           <NavLink

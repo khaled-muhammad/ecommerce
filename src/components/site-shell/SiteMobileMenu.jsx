@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { NavLink, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { LayoutDashboard, LogOut, Search, UserRound, X } from "lucide-react";
+import { Heart, LayoutDashboard, LogOut, Package, Search, UserRound, X } from "lucide-react";
 import { useAuth } from "../../auth/useAuth.js";
 import { hasStaffDashboardAccess } from "../../lib/staffCapabilities.js";
 import NavThemeToggle from "./NavThemeToggle.jsx";
@@ -179,6 +179,14 @@ export default function SiteMobileMenu({ open, onClose, menuDomId }) {
                 <NavLink to="/profile" className={subLinkClass} onClick={close}>
                   <UserRound className="h-5 w-5 shrink-0 opacity-80" strokeWidth={2} aria-hidden />
                   Profile
+                </NavLink>
+                <NavLink to="/orders" className={subLinkClass} onClick={close}>
+                  <Package className="h-5 w-5 shrink-0 opacity-80" strokeWidth={2} aria-hidden />
+                  Orders
+                </NavLink>
+                <NavLink to="/favorites" className={subLinkClass} onClick={close}>
+                  <Heart className="h-5 w-5 shrink-0 opacity-80" strokeWidth={2} aria-hidden />
+                  Favorites
                 </NavLink>
                 {showAdmin ? (
                   <NavLink to="/admin" className={subLinkClass} onClick={close}>

@@ -43,6 +43,8 @@ import ContactPage from "./routes/ContactPage.jsx";
 import AboutPage from "./routes/AboutPage.jsx";
 import SupportPage from "./routes/SupportPage.jsx";
 import NotFoundPage from "./routes/NotFoundPage.jsx";
+import OrdersPage from "./routes/OrdersPage.jsx";
+import FavoritesPage from "./routes/FavoritesPage.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
 import SiteConfigProvider from "./context/SiteConfigProvider.jsx";
 import { ThemeProvider } from "./theme/ThemeProvider.jsx";
@@ -109,6 +111,22 @@ createRoot(document.getElementById("root")).render(
                   element={
                     <RequireAuth>
                       <ProfilePage />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="orders"
+                  element={
+                    <RequireAuth>
+                      <OrdersPage />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="favorites"
+                  element={
+                    <RequireAuth>
+                      <FavoritesPage />
                     </RequireAuth>
                   }
                 />

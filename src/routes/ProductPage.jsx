@@ -1,13 +1,25 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
+import { ChevronRight, Heart, Minus, Plus, ShoppingCart } from "lucide-react";
+import { toast } from "react-toastify";
 import { fetchProductBySlug } from "../lib/catalogApi.js";
 import { formatUsd } from "../lib/money.js";
 import { useCart } from "../cart/useCart.js";
+import { useAuth } from "../auth/useAuth.js";
 import ProductCard from "../components/shop/ProductCard.jsx";
 
 const PLACEHOLDER_IMG =
   "https://images.unsplash.com/photo-1597872200969-cb565ebd4a7f?w=800&auto=format&fit=crop&q=80";
+
+async function parseJson(res) {
+  const text = await res.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
 
 /** @param {Record<string, unknown>} p */
 function productFromApiDetail(p) {
@@ -58,6 +70,7 @@ function relatedFromApi(p) {
 
 export default function ProductPage() {
   const { slug } = useParams();
+  const { user, authorizedFetch } = useAuth();
   const { addItem, openSideCart } = useCart();
   const [qty, setQty] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
@@ -65,6 +78,10 @@ export default function ProductPage() {
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [favorited, setFavorited] = useState(false);
+  const [favStatusLoading, setFavStatusLoading] = useState(false);
+  const [favBusy, setFavBusy] = useState(false);
 
   useEffect(() => {
     if (!slug) {
@@ -106,6 +123,60 @@ export default function ProductPage() {
     setActiveImage(0);
     setQty(1);
   }, [slug, product?.id]);
+
+  useEffect(() => {
+    if (!user || !product?.id) {
+      setFavorited(false);
+      setFavStatusLoading(false);
+      return;
+    }
+    const ac = new AbortController();
+    setFavStatusLoading(true);
+    void (async () => {
+      try {
+        const res = await authorizedFetch(
+          `/api/v1/profile/favorites/status?productId=${encodeURIComponent(String(product.id))}`,
+        );
+        if (ac.signal.aborted) return;
+        const data = await parseJson(res);
+        if (!ac.signal.aborted) setFavorited(Boolean(data?.favorited));
+      } catch {
+        if (!ac.signal.aborted) setFavorited(false);
+      } finally {
+        if (!ac.signal.aborted) setFavStatusLoading(false);
+      }
+    })();
+    return () => ac.abort();
+  }, [user, product?.id, authorizedFetch]);
+
+  const toggleFavorite = useCallback(async () => {
+    if (!user || !product?.id || favBusy) return;
+    const pid = String(product.id);
+    const next = !favorited;
+    setFavorited(next);
+    setFavBusy(true);
+    try {
+      if (next) {
+        const res = await authorizedFetch("/api/v1/profile/favorites", {
+          method: "POST",
+          body: JSON.stringify({ productId: pid }),
+        });
+        const data = await parseJson(res);
+        if (!res.ok) throw new Error(data?.message ?? "Could not save favorite");
+      } else {
+        const res = await authorizedFetch(`/api/v1/profile/favorites/${encodeURIComponent(pid)}`, {
+          method: "DELETE",
+        });
+        const data = await parseJson(res);
+        if (!res.ok && res.status !== 404) throw new Error(data?.message ?? "Could not remove favorite");
+      }
+    } catch (e) {
+      setFavorited(!next);
+      toast.error(e instanceof Error ? e.message : "Something went wrong");
+    } finally {
+      setFavBusy(false);
+    }
+  }, [user, product, favorited, favBusy, authorizedFetch]);
 
   if (!slug) {
     return <Navigate to="/shop" replace />;
@@ -152,7 +223,23 @@ export default function ProductPage() {
 
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div>
-          <div className="overflow-hidden rounded-2xl border border-[color-mix(in_srgb,var(--ink)_12%,transparent)] bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]">
+          <div className="relative overflow-hidden rounded-2xl border border-[color-mix(in_srgb,var(--ink)_12%,transparent)] bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]">
+            {user ? (
+              <button
+                type="button"
+                onClick={() => void toggleFavorite()}
+                disabled={favStatusLoading || favBusy}
+                className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm transition-opacity hover:bg-black/60 disabled:opacity-50"
+                aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
+                aria-pressed={favorited}
+              >
+                <Heart
+                  className={`h-5 w-5 ${favorited ? "fill-current" : ""}`}
+                  strokeWidth={2}
+                  aria-hidden
+                />
+              </button>
+            ) : null}
             <img src={gallery[activeImage]} alt="" className="aspect-square w-full object-cover" />
           </div>
           {gallery.length > 1 ? (

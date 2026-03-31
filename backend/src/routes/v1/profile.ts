@@ -1,15 +1,18 @@
 import { Router } from "express";
 import { z } from "zod";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { users, sessions, oauthAccounts } from "../../db/schema/user.js";
-import { cartItems } from "../../db/schema/catalog.js";
-import { orders } from "../../db/schema/order.js";
-import { userAddresses, userPaymentMethods } from "../../db/schema/profile.js";
+import { brands, cartItems, products } from "../../db/schema/catalog.js";
+import { orders, orderLines } from "../../db/schema/order.js";
+import { userAddresses, userPaymentMethods, userFavorites } from "../../db/schema/profile.js";
 import { requireAuth } from "../../middleware/auth.js";
 import { hashPassword, verifyPassword } from "../../services/auth.js";
 
 const router = Router();
+
+const orderRefUuidRegex =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const patchProfileSchema = z.object({
   name: z.string().min(0).max(200).optional(),
@@ -115,6 +118,219 @@ router.post("/password", requireAuth, async (req, res, next) => {
     await db.update(users).set({ passwordHash, updatedAt: new Date() }).where(eq(users.id, req.user.id));
 
     res.json({ message: "Password updated" });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ── Customer orders (scoped to current user) ──
+
+router.get("/orders", requireAuth, async (req, res, next) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ error: "UNAUTHORIZED" });
+      return;
+    }
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 25));
+    const offset = (page - 1) * limit;
+    const owner = eq(orders.userId, req.user.id);
+
+    const [rows, countRow] = await Promise.all([
+      db
+        .select({
+          id: orders.id,
+          orderNumber: orders.orderNumber,
+          status: orders.status,
+          totalCents: orders.totalCents,
+          createdAt: orders.createdAt,
+        })
+        .from(orders)
+        .where(owner)
+        .orderBy(desc(orders.createdAt))
+        .limit(limit)
+        .offset(offset),
+      db.select({ count: sql<number>`count(*)::int` }).from(orders).where(owner),
+    ]);
+
+    const total = Number(countRow[0]?.count ?? 0);
+    res.json({
+      orders: rows,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) || 1 },
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/orders/:orderRef", requireAuth, async (req, res, next) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ error: "UNAUTHORIZED" });
+      return;
+    }
+    const orderRef = Array.isArray(req.params.orderRef) ? req.params.orderRef[0]! : req.params.orderRef;
+    const isUuid = orderRefUuidRegex.test(orderRef);
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(isUuid ? eq(orders.id, orderRef) : eq(orders.orderNumber, orderRef))
+      .limit(1);
+
+    if (!order) {
+      res.status(404).json({ error: "NOT_FOUND", message: "Order not found" });
+      return;
+    }
+    if (order.userId !== req.user.id) {
+      res.status(403).json({ error: "FORBIDDEN", message: "Not your order" });
+      return;
+    }
+
+    const linesRaw = await db
+      .select({
+        id: orderLines.id,
+        productId: orderLines.productId,
+        productName: orderLines.productName,
+        productBrand: orderLines.productBrand,
+        priceCents: orderLines.priceCents,
+        quantity: orderLines.quantity,
+        lineTotalCents: orderLines.lineTotalCents,
+        productSlug: products.slug,
+      })
+      .from(orderLines)
+      .leftJoin(products, eq(orderLines.productId, products.id))
+      .where(eq(orderLines.orderId, order.id));
+
+    const lines = linesRaw.map((row) => ({
+      id: row.id,
+      productId: row.productId,
+      productName: row.productName,
+      productBrand: row.productBrand,
+      priceCents: row.priceCents,
+      quantity: row.quantity,
+      lineTotalCents: row.lineTotalCents,
+      productSlug: row.productSlug ?? null,
+    }));
+
+    res.json({ order, lines });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ── Favorites ──
+
+const favoriteBodySchema = z.object({
+  productId: z.string().uuid(),
+});
+
+router.get("/favorites/status", requireAuth, async (req, res, next) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ error: "UNAUTHORIZED" });
+      return;
+    }
+    const productId = typeof req.query.productId === "string" ? req.query.productId.trim() : "";
+    if (!productId || !z.string().uuid().safeParse(productId).success) {
+      res.status(400).json({ error: "BAD_REQUEST", message: "productId query required" });
+      return;
+    }
+    const [row] = await db
+      .select({ id: userFavorites.id })
+      .from(userFavorites)
+      .where(and(eq(userFavorites.userId, req.user.id), eq(userFavorites.productId, productId)))
+      .limit(1);
+    res.json({ favorited: !!row });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/favorites", requireAuth, async (req, res, next) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ error: "UNAUTHORIZED" });
+      return;
+    }
+    const rows = await db
+      .select({
+        favoriteId: userFavorites.id,
+        favoritedAt: userFavorites.createdAt,
+        id: products.id,
+        slug: products.slug,
+        name: products.name,
+        priceCents: products.priceCents,
+        compareAtCents: products.compareAtCents,
+        image: products.image,
+        images: products.images,
+        stock: products.stock,
+        isActive: products.isActive,
+        badge: products.badge,
+        shortDescription: products.shortDescription,
+        brand: brands.name,
+      })
+      .from(userFavorites)
+      .innerJoin(products, eq(userFavorites.productId, products.id))
+      .leftJoin(brands, eq(products.brandId, brands.id))
+      .where(eq(userFavorites.userId, req.user.id))
+      .orderBy(desc(userFavorites.createdAt));
+
+    res.json({ favorites: rows });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post("/favorites", requireAuth, async (req, res, next) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ error: "UNAUTHORIZED" });
+      return;
+    }
+    const body = favoriteBodySchema.parse(req.body);
+    const [productRow] = await db
+      .select({ id: products.id })
+      .from(products)
+      .where(eq(products.id, body.productId))
+      .limit(1);
+    if (!productRow) {
+      res.status(404).json({ error: "NOT_FOUND", message: "Product not found" });
+      return;
+    }
+
+    await db
+      .insert(userFavorites)
+      .values({ userId: req.user.id, productId: body.productId })
+      .onConflictDoNothing({ target: [userFavorites.userId, userFavorites.productId] });
+
+    res.status(201).json({ message: "Added" });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete("/favorites/:productId", requireAuth, async (req, res, next) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ error: "UNAUTHORIZED" });
+      return;
+    }
+    const productId = Array.isArray(req.params.productId) ? req.params.productId[0]! : req.params.productId;
+    if (typeof productId !== "string" || !productId) {
+      res.status(400).json({ error: "BAD_REQUEST" });
+      return;
+    }
+
+    const deleted = await db
+      .delete(userFavorites)
+      .where(and(eq(userFavorites.userId, req.user.id), eq(userFavorites.productId, productId)))
+      .returning({ id: userFavorites.id });
+
+    if (deleted.length === 0) {
+      res.status(404).json({ error: "NOT_FOUND" });
+      return;
+    }
+    res.json({ message: "Removed" });
   } catch (err) {
     next(err);
   }
@@ -355,6 +571,7 @@ router.delete("/account", requireAuth, async (req, res, next) => {
       await tx.delete(cartItems).where(eq(cartItems.userId, uid));
       await tx.delete(userAddresses).where(eq(userAddresses.userId, uid));
       await tx.delete(userPaymentMethods).where(eq(userPaymentMethods.userId, uid));
+      await tx.delete(userFavorites).where(eq(userFavorites.userId, uid));
       await tx.delete(users).where(eq(users.id, uid));
     });
 

@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Link, useLocation } from "react-router-dom";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { formatUsd } from "../lib/money.js";
+import { useAuth } from "../auth/useAuth.js";
 import { useCart } from "./useCart.js";
 import { useCartLines, useCartSubtotalCents } from "./cart-selectors.js";
 import "./side-cart.css";
@@ -170,15 +171,28 @@ export default function SideCart() {
               <span className="text-lg font-bold tabular-nums text-[color:var(--ink)]">{formatUsd(subtotal)}</span>
             </div>
             <p className="mt-1 text-[11px] leading-relaxed text-[color:color-mix(in_srgb,var(--ink)_50%,transparent)]">
-              Shipping &amp; taxes at checkout (demo).
+              {user ? "Pay securely via Stripe after you continue." : "Sign in to complete your purchase."}
             </p>
-            <Link
-              to="/checkout"
-              onClick={closeSideCart}
-              className="mt-4 flex w-full items-center justify-center rounded-xl bg-[color:var(--ink)] py-3.5 text-sm font-semibold text-[color:var(--paper)] transition-opacity hover:opacity-90"
-            >
-              Checkout
-            </Link>
+            {user ? (
+              <Link
+                to="/checkout"
+                onClick={closeSideCart}
+                className="mt-4 flex w-full items-center justify-center rounded-xl bg-[color:var(--ink)] py-3.5 text-sm font-semibold text-[color:var(--paper)] transition-opacity hover:opacity-90"
+              >
+                Checkout
+              </Link>
+            ) : authLoading ? (
+              <p className="mt-4 text-center text-xs text-[color:color-mix(in_srgb,var(--ink)_50%,transparent)]">Checking account…</p>
+            ) : (
+              <Link
+                to="/sign-in"
+                state={{ from: { pathname: "/checkout" } }}
+                onClick={closeSideCart}
+                className="mt-4 flex w-full items-center justify-center rounded-xl bg-[color:var(--ink)] py-3.5 text-sm font-semibold text-[color:var(--paper)] transition-opacity hover:opacity-90"
+              >
+                Sign in to checkout
+              </Link>
+            )}
             <Link
               to="/cart"
               onClick={closeSideCart}

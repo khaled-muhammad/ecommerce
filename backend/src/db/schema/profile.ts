@@ -1,5 +1,6 @@
-import { pgTable, text, integer, boolean, timestamp, uuid, index } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, boolean, timestamp, uuid, index, uniqueIndex } from "drizzle-orm/pg-core";
 import { users } from "./user.js";
+import { products } from "./catalog.js";
 
 export const userAddresses = pgTable(
   "user_addresses",
@@ -44,5 +45,23 @@ export const userPaymentMethods = pgTable(
   },
   (table) => [
     index("idx_user_payment_methods_user").on(table.userId),
+  ],
+);
+
+export const userFavorites = pgTable(
+  "user_favorites",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("idx_user_favorites_user").on(table.userId),
+    uniqueIndex("user_favorites_user_product_uidx").on(table.userId, table.productId),
   ],
 );

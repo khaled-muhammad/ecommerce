@@ -3,8 +3,10 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 import { formatUsd } from "../lib/money.js";
 import { useCart } from "../cart/useCart.js";
 import { useCartLines, useCartSubtotalCents } from "../cart/cart-selectors.js";
+import { useAuth } from "../auth/useAuth.js";
 
 export default function CartPage() {
+  const { user, loading: authLoading } = useAuth();
   const { setQuantity, removeItem } = useCart();
   const lines = useCartLines();
   const subtotal = useCartSubtotalCents();
@@ -30,7 +32,7 @@ export default function CartPage() {
     <div className="mx-auto w-full max-w-[min(100%,960px)] px-4 pb-20 pt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5.25rem))] md:px-6 lg:px-8">
       <h1 className="font-ui-medium text-3xl tracking-[-0.03em] text-[color:var(--ink)] md:text-4xl">Your cart</h1>
       <p className="mt-2 text-sm text-[color:color-mix(in_srgb,var(--ink)_60%,transparent)]">
-        Review quantities before checkout. Prices and availability are demo data.
+        Review quantities before checkout. Checkout uses your signed-in account and server cart.
       </p>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_320px] lg:items-start">
@@ -102,14 +104,28 @@ export default function CartPage() {
             <span className="font-bold tabular-nums text-[color:var(--ink)]">{formatUsd(subtotal)}</span>
           </div>
           <p className="mt-2 text-xs leading-relaxed text-[color:color-mix(in_srgb,var(--ink)_55%,transparent)]">
-            Shipping and taxes are calculated at checkout (demo - no real payment).
+            {user
+              ? "You will pay securely via Stripe on the next step."
+              : "Sign in to place an order—checkout is available for signed-in customers only."}
           </p>
-          <Link
-            to="/checkout"
-            className="mt-6 flex w-full items-center justify-center rounded-xl bg-[color:var(--ink)] py-3.5 text-sm font-semibold text-[color:var(--paper)] transition-opacity hover:opacity-90"
-          >
-            Proceed to checkout
-          </Link>
+          {user ? (
+            <Link
+              to="/checkout"
+              className="mt-6 flex w-full items-center justify-center rounded-xl bg-[color:var(--ink)] py-3.5 text-sm font-semibold text-[color:var(--paper)] transition-opacity hover:opacity-90"
+            >
+              Proceed to checkout
+            </Link>
+          ) : authLoading ? (
+            <p className="mt-6 text-center text-sm text-[color:color-mix(in_srgb,var(--ink)_55%,transparent)]">Checking account…</p>
+          ) : (
+            <Link
+              to="/sign-in"
+              state={{ from: { pathname: "/checkout" } }}
+              className="mt-6 flex w-full items-center justify-center rounded-xl bg-[color:var(--ink)] py-3.5 text-sm font-semibold text-[color:var(--paper)] transition-opacity hover:opacity-90"
+            >
+              Sign in to checkout
+            </Link>
+          )}
           <Link
             to="/shop"
             className="mt-3 block w-full text-center text-sm font-medium text-[color:color-mix(in_srgb,var(--ink)_65%,transparent)] hover:text-[color:var(--ink)] hover:underline"
