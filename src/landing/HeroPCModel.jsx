@@ -1,4 +1,4 @@
-import { Component, useCallback, useEffect, useRef, useState } from "react";
+import { Component, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -24,17 +24,32 @@ const FRAME_STYLE = {
   minHeight: "clamp(560px, 78vh, min(92vh, 1080px))",
 };
 
-function isWebGLAvailable() {
+/**
+ * Match Three's WebGLRenderer path. A raw canvas getContext probe can succeed while
+ * THREE.WebGLRenderer still fails (ANGLE, sandboxed GPU, driver quirks), which used to
+ * leave an unhandled rejection from R3F and blank the hero.
+ */
+function probeThreeWebGLRenderer() {
   if (typeof document === "undefined") return false;
+  let renderer = null;
   try {
-    const c = document.createElement("canvas");
-    const ctx =
-      c.getContext("webgl2", { failIfMajorPerformanceCaveat: false }) ||
-      c.getContext("webgl", { failIfMajorPerformanceCaveat: false }) ||
-      c.getContext("experimental-webgl", { failIfMajorPerformanceCaveat: false });
+    const canvas = document.createElement("canvas");
+    renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: "high-performance",
+    });
+    const ctx = renderer.getContext();
     return !!ctx;
   } catch {
     return false;
+  } finally {
+    try {
+      renderer?.dispose();
+    } catch {
+      /* noop */
+    }
   }
 }
 
@@ -48,12 +63,15 @@ class HeroCanvasErrorBoundary extends Component {
     return { hasError: true };
   }
 
-  componentDidCatch() {
+  componentDidCatch(err) {
+    console.warn("[HeroPCModel] WebGL / canvas error, using static image.", err);
     this.props.onFallback?.();
   }
 
   render() {
-    if (this.state.hasError) return null;
+    if (this.state.hasError) {
+      return this.props.fallback ?? null;
+    }
     return this.props.children;
   }
 }
@@ -187,17 +205,43 @@ function ModelScene({ scrollRef, onAllModelsFailed }) {
 
 export default function HeroPCModel() {
   const scrollRef = useRef(0);
-  const [useFallbackImage, setUseFallbackImage] = useState(
-    () => typeof document !== "undefined" && !isWebGLAvailable(),
-  );
+  /** pending: before layout probe; image: PNG hero; webgl: Canvas */
+  const [heroMode, setHeroMode] = useState("pending");
 
   const onModelsFailed = useCallback(() => {
-    setUseFallbackImage(true);
+    setHeroMode("image");
   }, []);
 
   const onCanvasCrashed = useCallback(() => {
-    setUseFallbackImage(true);
+    setHeroMode("image");
   }, []);
+
+  useLayoutEffect(() => {
+    if (typeof document === "undefined") return;
+    if (!probeThreeWebGLRenderer()) {
+      setHeroMode("image");
+      return;
+    }
+    setHeroMode("webgl");
+  }, []);
+
+  /** R3F configure() is async; if WebGL fails there, React may not catch it. */
+  useEffect(() => {
+    if (heroMode !== "webgl") return;
+    const onRejection = (event) => {
+      const r = event.reason;
+      const msg = typeof r === "string" ? r : r?.message ?? String(r ?? "");
+      if (
+        /WebGL|THREE\.WebGLRenderer|Error creating WebGL context/i.test(msg) ||
+        (r instanceof Error && r.message?.includes("WebGL"))
+      ) {
+        event.preventDefault();
+        setHeroMode("image");
+      }
+    };
+    window.addEventListener("unhandledrejection", onRejection);
+    return () => window.removeEventListener("unhandledrejection", onRejection);
+  }, [heroMode]);
 
   useEffect(() => {
     const docEl = document.documentElement;
@@ -238,7 +282,20 @@ export default function HeroPCModel() {
     };
   }, []);
 
-  if (useFallbackImage) {
+  if (heroMode === "pending") {
+    return (
+      <HeroImageShell>
+        <div
+          className="relative w-full min-h-0 touch-pan-y bg-[color:color-mix(in_srgb,var(--vexo-card)_35%,transparent)] dark:bg-[color:color-mix(in_srgb,var(--vexo-bg)_88%,transparent)]"
+          style={FRAME_STYLE}
+          aria-busy="true"
+          aria-label="Loading hero"
+        />
+      </HeroImageShell>
+    );
+  }
+
+  if (heroMode === "image") {
     return (
       <HeroImageShell>
         <HeroFallbackImage />
@@ -246,13 +303,15 @@ export default function HeroPCModel() {
     );
   }
 
+  const fallbackImage = <HeroFallbackImage />;
+
   return (
     <HeroImageShell>
       <div
         className="relative w-full min-h-0 touch-pan-y"
         style={FRAME_STYLE}
       >
-        <HeroCanvasErrorBoundary onFallback={onCanvasCrashed}>
+        <HeroCanvasErrorBoundary fallback={fallbackImage} onFallback={onCanvasCrashed}>
           <Canvas
             frameloop="always"
             camera={{ position: [0, 0, 5.05], fov: 40, near: 1, far: 200 }}
