@@ -63,6 +63,9 @@ export default function SiteFooter() {
               <h2 className="site-footer__col-title">Help</h2>
               <ul className="site-footer__links">
                 <li>
+                  <Link to="/about">About</Link>
+                </li>
+                <li>
                   <Link to="/contact">Contact</Link>
                 </li>
                 <li>

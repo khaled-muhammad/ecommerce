@@ -20,10 +20,23 @@ export const AUTH_FORM_GLASS_PROPS = {
 const AUTH_NAV_TOP_PAD =
   "pt-[max(7.25rem,calc(env(safe-area-inset-top,0px)+6rem))]";
 
-export default function AuthPageShell({ children }) {
+/**
+ * @param {object} props
+ * @param {import("react").ReactNode} props.children
+ * @param {boolean} [props.scrollable] When true, content aligns from the top with padding so long pages (e.g. About) scroll naturally instead of being vertically centered.
+ */
+export default function AuthPageShell({ children, scrollable = false }) {
   const isMobileShell = useMobileShell();
   const reduceMotion = usePrefersReducedMotion();
   const showLightRays = !isMobileShell && !reduceMotion;
+
+  const mainClass = [
+    "relative z-[1] flex w-full flex-1 flex-col items-center px-4 pb-14 sm:pb-20",
+    AUTH_NAV_TOP_PAD,
+    scrollable
+      ? "justify-start pb-6 sm:pb-10 md:pt-[max(9.25rem,calc(env(safe-area-inset-top,0px)+7.85rem))]"
+      : "justify-center",
+  ].join(" ");
 
   return (
     <div className="auth-page relative flex min-h-[100svh] min-h-[100dvh] w-full min-w-0 flex-1 flex-col">
@@ -59,9 +72,7 @@ export default function AuthPageShell({ children }) {
         aria-hidden
       />
 
-      <div
-        className={`relative z-[1] flex w-full flex-1 flex-col items-center justify-center px-4 pb-14 sm:pb-20 ${AUTH_NAV_TOP_PAD}`}
-      >
+      <div className={mainClass}>
         {children}
         <Link
           to="/"

@@ -163,3 +163,12 @@
   overflow: visible;
   padding: 0;
 }
+
+/* Light primary pill behind BorderGlow: tame mesh wash in dark mode (matches landing hero CTAs) */
+.dark .border-glow-card.border-glow-card--pill.border-glow-card--primary-fill::after {
+  mix-blend-mode: multiply;
+}
+
+.dark .border-glow-card.border-glow-card--pill.border-glow-card--primary-fill > .edge-light {
+  mix-blend-mode: normal;
+}

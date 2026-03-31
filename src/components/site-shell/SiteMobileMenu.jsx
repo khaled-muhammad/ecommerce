@@ -13,6 +13,7 @@ const PRIMARY_LINKS = [
 ];
 
 const HELP_LINKS = [
+  { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
   { to: "/support", label: "Support" },
 ];

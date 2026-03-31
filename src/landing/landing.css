@@ -193,15 +193,6 @@
   }
 }
 
-/* Primary CTA uses a light surface in .dark - soft-light / plus-lighter wash out on pale bg */
-.dark .landing-home .border-glow-card.border-glow-card--pill.border-glow-card--primary-fill::after {
-  mix-blend-mode: multiply;
-}
-
-.dark .landing-home .border-glow-card.border-glow-card--pill.border-glow-card--primary-fill > .edge-light {
-  mix-blend-mode: normal;
-}
-
 /* Full-viewport bleed inside the centered shell column */
 .landing-home .laser-reveal-section {
   width: 100vw;

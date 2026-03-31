@@ -18,6 +18,7 @@ import PrivacyPage from "./routes/PrivacyPage.jsx";
 import TermsPage from "./routes/TermsPage.jsx";
 import ProfilePage from "./routes/ProfilePage.jsx";
 import ContactPage from "./routes/ContactPage.jsx";
+import AboutPage from "./routes/AboutPage.jsx";
 import SupportPage from "./routes/SupportPage.jsx";
 import NotFoundPage from "./routes/NotFoundPage.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
@@ -89,6 +90,7 @@ createRoot(document.getElementById("root")).render(
                     </RequireAuth>
                   }
                 />
+                  <Route path="about" element={<AboutPage />} />
                   <Route path="contact" element={<ContactPage />} />
                   <Route path="support" element={<SupportPage />} />
                   <Route path="privacy" element={<PrivacyPage />} />

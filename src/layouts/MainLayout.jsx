@@ -23,7 +23,11 @@ export default function MainLayout() {
   const { pathname } = useLocation();
   const isLanding = pathname === "/";
   const isAuthPage =
-    pathname === "/sign-in" || pathname === "/register" || pathname === "/contact" || pathname === "/support";
+    pathname === "/sign-in" ||
+    pathname === "/register" ||
+    pathname === "/about" ||
+    pathname === "/contact" ||
+    pathname === "/support";
   const isAdminHub = pathname === "/admin" || pathname.startsWith("/admin/");
   const hidePageTail = isLanding || isAuthPage;
 

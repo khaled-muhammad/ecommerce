@@ -23,21 +23,25 @@ export default function GlowingMainLink({
 }) {
   const preset = variant === "secondary" ? SECONDARY : PRIMARY;
   const { className: linkClassFromSpread = "", ...rest } = linkProps;
-  const btn =
+  const baseLink =
     variant === "secondary"
-      ? "btn-secondary btn-secondary--glow"
-      : "btn-primary btn-primary--glow";
-  const linkClass = [
-    btn,
-    "inline-flex",
-    "items-center",
-    "justify-center",
-    "no-underline",
-    linkClassName,
-    linkClassFromSpread,
-  ]
-    .filter(Boolean)
-    .join(" ");
+      ? [
+          "font-ui inline-flex min-h-[3rem] w-auto max-w-full items-center justify-center gap-2 rounded-full",
+          "px-8 py-3.5 sm:px-10 sm:py-4",
+          "text-sm font-semibold leading-tight tracking-tight",
+          "bg-transparent text-[color:var(--vexo-btn-secondary-fg)] no-underline",
+          "transition-[transform,color] duration-200 hover:scale-[1.02] active:scale-[0.99]",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--vexo-focus-ring)]",
+        ].join(" ")
+      : [
+          "font-ui inline-flex min-h-[3rem] w-auto max-w-full items-center justify-center gap-2 rounded-full",
+          "px-8 py-3.5 sm:px-10 sm:py-4",
+          "text-sm font-semibold leading-tight tracking-tight",
+          "bg-transparent text-[color:var(--vexo-btn-primary-fg)] no-underline",
+          "transition-[transform,color] duration-200 hover:scale-[1.02] active:scale-[0.99]",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--vexo-focus-ring)]",
+        ].join(" ");
+  const linkClass = [baseLink, linkClassName, linkClassFromSpread].filter(Boolean).join(" ");
 
   const shellClass = [
     "border-glow-card--pill",
