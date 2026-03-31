@@ -41,7 +41,11 @@ function probeThreeWebGLRenderer() {
       powerPreference: "high-performance",
     });
     const ctx = renderer.getContext();
-    return !!ctx;
+    // Extra validation: ensure we actually got a working GL context
+    if (!ctx) return false;
+    // Check the context isn't lost immediately
+    if (typeof ctx.isContextLost === "function" && ctx.isContextLost()) return false;
+    return true;
   } catch {
     return false;
   } finally {
@@ -225,22 +229,36 @@ export default function HeroPCModel() {
     setHeroMode("webgl");
   }, []);
 
-  /** R3F configure() is async; if WebGL fails there, React may not catch it. */
+  /** R3F configure() is async; if WebGL fails there, React may not catch it.
+   *  Also catch synchronous throws via window.onerror. */
   useEffect(() => {
     if (heroMode !== "webgl") return;
+    const WEBGL_RE = /WebGL|THREE\.WebGLRenderer|Error creating WebGL context/i;
+
     const onRejection = (event) => {
       const r = event.reason;
       const msg = typeof r === "string" ? r : r?.message ?? String(r ?? "");
-      if (
-        /WebGL|THREE\.WebGLRenderer|Error creating WebGL context/i.test(msg) ||
-        (r instanceof Error && r.message?.includes("WebGL"))
-      ) {
+      if (WEBGL_RE.test(msg) || (r instanceof Error && r.message?.includes("WebGL"))) {
         event.preventDefault();
         setHeroMode("image");
       }
     };
+
+    const onError = (event) => {
+      const msg = event?.message ?? (typeof event === "string" ? event : "");
+      if (WEBGL_RE.test(msg)) {
+        if (event?.preventDefault) event.preventDefault();
+        setHeroMode("image");
+        return true; // suppress the error
+      }
+    };
+
     window.addEventListener("unhandledrejection", onRejection);
-    return () => window.removeEventListener("unhandledrejection", onRejection);
+    window.addEventListener("error", onError);
+    return () => {
+      window.removeEventListener("unhandledrejection", onRejection);
+      window.removeEventListener("error", onError);
+    };
   }, [heroMode]);
 
   useEffect(() => {

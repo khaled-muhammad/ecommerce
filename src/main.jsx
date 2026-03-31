@@ -1,6 +1,28 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+
+/* ── Global WebGL error suppressor ──────────────────────────────────
+ * Some machines (Intel HD 530. etc.) throw uncatchable WebGL errors
+ * that bypass React error boundaries and crash the entire page.
+ * This last-resort handler prevents those from killing the app.
+ */
+const WEBGL_RE = /WebGL|Error creating WebGL context|THREE\.WebGLRenderer/i;
+window.addEventListener("error", (e) => {
+  if (WEBGL_RE.test(e?.message ?? "")) {
+    e.preventDefault();
+    console.warn("[global] Suppressed WebGL error:", e.message);
+    return true;
+  }
+});
+window.addEventListener("unhandledrejection", (e) => {
+  const msg = typeof e.reason === "string" ? e.reason : e.reason?.message ?? "";
+  if (WEBGL_RE.test(msg)) {
+    e.preventDefault();
+    console.warn("[global] Suppressed WebGL rejection:", msg);
+  }
+});
+
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import HomePage from "./routes/HomePage.jsx";
 import BrandsPage from "./routes/BrandsPage.jsx";

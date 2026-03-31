@@ -291,17 +291,23 @@ export const LaserFlow = ({
 
   useEffect(() => {
     const mount = mountRef.current;
-    const renderer = new THREE.WebGLRenderer({
-      antialias: false,
-      alpha: transparentBackground,
-      depth: false,
-      stencil: false,
-      powerPreference: 'high-performance',
-      premultipliedAlpha: transparentBackground,
-      preserveDrawingBuffer: false,
-      failIfMajorPerformanceCaveat: false,
-      logarithmicDepthBuffer: false
-    });
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: false,
+        alpha: transparentBackground,
+        depth: false,
+        stencil: false,
+        powerPreference: 'high-performance',
+        premultipliedAlpha: transparentBackground,
+        preserveDrawingBuffer: false,
+        failIfMajorPerformanceCaveat: false,
+        logarithmicDepthBuffer: false
+      });
+    } catch (e) {
+      console.warn('[LaserFlow] WebGL not available, skipping.', e);
+      return;
+    }
     rendererRef.current = renderer;
 
     baseDprRef.current = Math.min(dpr ?? (window.devicePixelRatio || 1), 2);
