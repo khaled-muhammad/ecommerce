@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { formatUsd } from "../lib/money.js";
 import { useCart } from "../cart/useCart.js";
@@ -52,6 +52,8 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(/** @type {"stripe" | "cod"} */ ("stripe"));
+  /** When true, cart was cleared after a successful COD; do not send user to /cart instead of /checkout/complete. */
+  const skipEmptyCartRedirect = useRef(false);
 
   useEffect(() => {
     if (!configLoaded) return;
@@ -83,7 +85,11 @@ export default function CheckoutPage() {
   }, []);
 
   useEffect(() => {
-    if (items.length === 0) {
+    if (items.length > 0) skipEmptyCartRedirect.current = false;
+  }, [items.length]);
+
+  useEffect(() => {
+    if (items.length === 0 && !skipEmptyCartRedirect.current) {
       navigate("/cart", { replace: true });
     }
   }, [items.length, navigate]);
@@ -203,12 +209,11 @@ export default function CheckoutPage() {
         setError(typeof data?.message === "string" ? data.message : "Checkout failed. Please try again.");
         return;
       }
-      if (data?.paymentMethod === "cod" && data?.order?.orderNumber) {
+      const orderNumber = data?.order && typeof data.order.orderNumber === "string" ? data.order.orderNumber : null;
+      if (data?.paymentMethod === "cod" && orderNumber) {
+        skipEmptyCartRedirect.current = true;
+        navigate(`/checkout/complete?order=${encodeURIComponent(orderNumber)}&payment=cod`, { replace: true });
         clearCart();
-        navigate(
-          `/checkout/complete?order=${encodeURIComponent(data.order.orderNumber)}&payment=cod`,
-          { replace: true },
-        );
         return;
       }
       const url = data?.checkoutUrl;
