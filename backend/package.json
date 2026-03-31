@@ -13,6 +13,8 @@
     "lint": "tsc --noEmit",
     "seed": "tsx src/db/seed.ts",
     "create-admin": "tsx src/scripts/create-admin.ts",
+    "products:export": "tsx src/scripts/export-products.ts",
+    "products:import": "tsx src/scripts/import-products.ts",
     "db:setup": "bash scripts/setup-db.sh",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push"
