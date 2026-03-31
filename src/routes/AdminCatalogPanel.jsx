@@ -495,20 +495,29 @@ export default function AdminCatalogPanel() {
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
               <h3 className="font-ui text-base font-semibold text-[color:var(--ink)]">Product list</h3>
               <form
-                className="flex flex-wrap items-end gap-2"
+                className="flex flex-wrap items-end gap-3"
                 onSubmit={(e) => {
                   e.preventDefault();
                   setProdPage(1);
                   void loadProducts(1);
                 }}
               >
-                <label className="text-xs font-semibold uppercase text-[color:color-mix(in_srgb,var(--ink)_45%,transparent)]">
-                  Search
-                  <input className={`${field} mt-1 w-40 sm:w-48`} value={prodSearch} onChange={(e) => setProdSearch(e.target.value)} placeholder="Name or slug" />
+                <label className="flex min-w-[10rem] flex-col gap-1.5">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[color:color-mix(in_srgb,var(--ink)_45%,transparent)]">
+                    Search
+                  </span>
+                  <input
+                    className={`${field} w-full min-w-[10rem] sm:w-48`}
+                    value={prodSearch}
+                    onChange={(e) => setProdSearch(e.target.value)}
+                    placeholder="Name or slug"
+                  />
                 </label>
-                <label className="text-xs font-semibold uppercase text-[color:color-mix(in_srgb,var(--ink)_45%,transparent)]">
-                  Status
-                  <select className={`${field} mt-1`} value={prodActive} onChange={(e) => setProdActive(e.target.value)}>
+                <label className="flex min-w-[7rem] flex-col gap-1.5">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[color:color-mix(in_srgb,var(--ink)_45%,transparent)]">
+                    Status
+                  </span>
+                  <select className={`${field} w-full`} value={prodActive} onChange={(e) => setProdActive(e.target.value)}>
                     <option value="all">All</option>
                     <option value="true">Active</option>
                     <option value="false">Inactive</option>
