@@ -3,7 +3,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { eq, and, sql } from "drizzle-orm";
 import { db } from "../../db/index.js";
-import { cartItems, products } from "../../db/schema/catalog.js";
+import { brands, cartItems, products } from "../../db/schema/catalog.js";
 import { requireAuth, optionalAuth } from "../../middleware/auth.js";
 
 const router = Router();
@@ -34,14 +34,15 @@ router.get("/", optionalAuth, async (req, res, next) => {
       .select()
       .from(cartItems)
       .where(and(...conditions))
-      .innerJoin(products, eq(cartItems.productId, products.id));
+      .innerJoin(products, eq(cartItems.productId, products.id))
+      .leftJoin(brands, eq(products.brandId, brands.id));
 
     const lines = items.map((row) => ({
       id: row.cart_items.id,
       productId: row.products.id,
       slug: row.products.slug,
       name: row.products.name,
-      brand: row.products.brandId, // will be joined in future
+      brand: row.brands?.name ?? "Other",
       priceCents: row.products.priceCents,
       image: row.products.image,
       quantity: row.cart_items.quantity,

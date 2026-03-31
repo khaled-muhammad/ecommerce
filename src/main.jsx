@@ -58,11 +58,11 @@ import { SmoothCursor } from "@/components/ui/smooth-cursor";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ThemeProvider>
-      <CartProvider>
-        <SiteConfigProvider>
-          <SmoothCursor />
-          <BrowserRouter>
-            <AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <CartProvider>
+            <SiteConfigProvider>
+              <SmoothCursor />
               <OAuthAccessBridge />
               <Routes>
                 <Route path="/" element={<MainLayout />}>
@@ -72,7 +72,14 @@ createRoot(document.getElementById("root")).render(
                 <Route path="categories" element={<CategoriesPage />} />
                 <Route path="brands" element={<BrandsPage />} />
                 <Route path="cart" element={<CartPage />} />
-                <Route path="checkout" element={<CheckoutPage />} />
+                <Route
+                  path="checkout"
+                  element={
+                    <RequireAuth>
+                      <CheckoutPage />
+                    </RequireAuth>
+                  }
+                />
                 <Route path="checkout/complete" element={<CheckoutCompletePage />} />
                 <Route
                   path="sign-in"
@@ -138,11 +145,11 @@ createRoot(document.getElementById("root")).render(
                   <Route path="*" element={<NotFoundPage />} />
                 </Route>
               </Routes>
-            </AuthProvider>
-          </BrowserRouter>
-          <AppToasts />
-        </SiteConfigProvider>
-      </CartProvider>
+              <AppToasts />
+            </SiteConfigProvider>
+          </CartProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </ThemeProvider>
   </StrictMode>,
 );

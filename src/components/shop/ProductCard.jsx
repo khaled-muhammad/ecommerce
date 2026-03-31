@@ -5,13 +5,7 @@ import { toast } from "react-toastify";
 import { formatUsd } from "../../lib/money.js";
 import { useCart } from "../../cart/useCart.js";
 import { useAuth } from "../../auth/useAuth.js";
-
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-/** @param {unknown} id */
-function isProductUuid(id) {
-  return typeof id === "string" && UUID_RE.test(id);
-}
+import { isProductUuid } from "../../cart/cartApi.js";
 
 async function parseJson(res) {
   const text = await res.text();
