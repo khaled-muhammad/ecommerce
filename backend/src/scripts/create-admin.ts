@@ -39,7 +39,7 @@ function parseArgs(argv: string[]): Record<string, string | boolean> {
 }
 
 function printHelp(): void {
-  console.log(`create-admin — create or promote a staff user (admin / owner)
+  console.log(`create-admin - create or promote a staff user (admin / owner)
 
 Create new user:
   npm run create-admin -- --email <email> --password <password> [--name <name>] [--role admin|owner]

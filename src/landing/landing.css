@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
-/* Landing theme (scoped under .landing-home) — colors from index.css :root / .dark */
+/* Landing theme (scoped under .landing-home) - colors from index.css :root / .dark */
 .landing-home {
   font-family: "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -46,7 +46,7 @@
 }
 
 .landing-home .watermark-text {
-  font-size: clamp(80px, 15vw, 180px);
+  font-size: clamp(48px, 12vw, 180px);
   line-height: 1;
   letter-spacing: -0.05em;
   font-weight: 900;
@@ -58,6 +58,18 @@
 
 .landing-home .hero-gradient {
   background: linear-gradient(180deg, var(--vexo-bg) 0%, var(--vexo-elevated) 100%);
+}
+
+.landing-home .section-padding {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+@media (min-width: 1024px) {
+  .landing-home .section-padding {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
 }
 
 /* Full-viewport hero: top inset scales with screen + notch; clears fixed shell nav without layout padding */
@@ -106,7 +118,7 @@
     0 4px 6px -4px color-mix(in srgb, var(--vexo-btn-primary-bg) 12%, transparent);
 }
 
-/* Inside BorderGlow — shell carries fill; link stays text + padding only */
+/* Inside BorderGlow - shell carries fill; link stays text + padding only */
 .landing-home .btn-primary.btn-primary--glow,
 .landing-home .btn-primary.btn-primary--glow:hover {
   background-color: transparent;
@@ -141,7 +153,7 @@
 
 .landing-home .btn-secondary.btn-secondary--glow:hover {
   background-color: transparent;
-  /* No inverted fill on glow shell — keep label color (hover-fg is for solid hover-bg) */
+  /* No inverted fill on glow shell - keep label color (hover-fg is for solid hover-bg) */
   color: var(--vexo-btn-secondary-fg);
 }
 
@@ -181,7 +193,7 @@
   }
 }
 
-/* Primary CTA uses a light surface in .dark — soft-light / plus-lighter wash out on pale bg */
+/* Primary CTA uses a light surface in .dark - soft-light / plus-lighter wash out on pale bg */
 .dark .landing-home .border-glow-card.border-glow-card--pill.border-glow-card--primary-fill::after {
   mix-blend-mode: multiply;
 }

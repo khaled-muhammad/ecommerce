@@ -1,8 +1,7 @@
 import { apiUrl } from "./apiUrl.js";
 
-/**
- * @returns {Promise<Array<{ id: string, slug: string, title: string, description: string | null, image: string | null, sortOrder: number }>>}
- */
+/** Shop/catalog fetch helpers (`credentials: "include"`). */
+
 export async function fetchCategories() {
   const res = await fetch(apiUrl("/api/v1/categories"), { credentials: "include" });
   if (!res.ok) throw new Error(`Failed to load categories (${res.status})`);
@@ -12,9 +11,6 @@ export async function fetchCategories() {
   return list;
 }
 
-/**
- * @returns {Promise<Array<{ id: string, slug: string, name: string, logo: string | null, website: string | null, isActive: boolean }>>}
- */
 export async function fetchBrands() {
   const res = await fetch(apiUrl("/api/v1/brands"), { credentials: "include" });
   if (!res.ok) throw new Error(`Failed to load brands (${res.status})`);
@@ -24,19 +20,6 @@ export async function fetchBrands() {
   return list;
 }
 
-/**
- * @param {{
- *   category?: string,
- *   brandSlugs?: string[],
- *   search?: string,
- *   sort?: string,
- *   min?: string,
- *   max?: string,
- *   stock?: 'in'|'out'|undefined,
- *   page?: number,
- *   limit?: number,
- * }} args
- */
 export function buildShopListSearchParams(args) {
   const sp = new URLSearchParams();
   const cat = args.category;
@@ -55,15 +38,6 @@ export function buildShopListSearchParams(args) {
   return sp;
 }
 
-/**
- * @param {{
- *   category?: string,
- *   search?: string,
- *   min?: string,
- *   max?: string,
- *   stock?: 'in'|'out'|undefined,
- * }} args
- */
 export function buildShopFacetsSearchParams(args) {
   const sp = new URLSearchParams();
   const cat = args.category;
@@ -76,10 +50,6 @@ export function buildShopFacetsSearchParams(args) {
   return sp;
 }
 
-/**
- * @param {Parameters<typeof buildShopListSearchParams>[0]} args
- * @param {AbortSignal} [signal]
- */
 export async function fetchShopProducts(args, signal) {
   const sp = buildShopListSearchParams(args);
   const res = await fetch(apiUrl(`/api/v1/products?${sp}`), { credentials: "include", signal });
@@ -87,10 +57,6 @@ export async function fetchShopProducts(args, signal) {
   return res.json();
 }
 
-/**
- * @param {Parameters<typeof buildShopFacetsSearchParams>[0]} args
- * @param {AbortSignal} [signal]
- */
 export async function fetchShopFacets(args, signal) {
   const sp = buildShopFacetsSearchParams(args);
   const res = await fetch(apiUrl(`/api/v1/products/facets?${sp}`), { credentials: "include", signal });
@@ -98,10 +64,6 @@ export async function fetchShopFacets(args, signal) {
   return res.json();
 }
 
-/**
- * @param {string} q
- * @param {AbortSignal} [signal]
- */
 export async function fetchSearchSuggestions(q, signal) {
   const t = q.trim();
   if (t.length < 2) return { suggestions: [] };
@@ -114,10 +76,6 @@ export async function fetchSearchSuggestions(q, signal) {
   return res.json();
 }
 
-/**
- * @param {string} slug
- * @param {AbortSignal} [signal]
- */
 export async function fetchProductBySlug(slug, signal) {
   const res = await fetch(apiUrl(`/api/v1/products/${encodeURIComponent(slug)}`), {
     credentials: "include",

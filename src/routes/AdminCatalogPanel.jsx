@@ -472,7 +472,7 @@ export default function AdminCatalogPanel() {
 
           <div className={`${card} flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between`}>
             <p className="text-sm text-[color:color-mix(in_srgb,var(--ink)_52%,transparent)]">
-              Create or edit products in a guided modal — specs match the category (cases, CPUs, GPUs, …) with live image preview.
+              Create or edit products in a guided modal - specs match the category (cases, CPUs, GPUs, …) with live image preview.
             </p>
             <button type="button" className={`${btnPrimary} gap-2`} onClick={openCreateProduct}>
               <Plus className="h-4 w-4" strokeWidth={2.5} />

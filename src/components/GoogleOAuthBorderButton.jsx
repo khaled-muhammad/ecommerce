@@ -37,7 +37,7 @@ export default function GoogleOAuthBorderButton({ mode = "sign-in", redirectTo =
   const title = mode === "sign-up" ? "Sign up with Google" : "Continue with Google";
   const subtitle =
     mode === "sign-up"
-      ? "New here — we’ll create your account"
+      ? "New here - we’ll create your account"
       : "Sign in or create an account";
 
   return (

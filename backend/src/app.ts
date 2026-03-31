@@ -18,6 +18,7 @@ import promosRouter from "./routes/v1/promotions.js";
 import analyticsRouter from "./routes/v1/analytics.js";
 import profileRouter from "./routes/v1/profile.js";
 import adminCatalogRouter from "./routes/v1/adminCatalog.js";
+import siteRouter from "./routes/v1/site.js";
 
 const app = express();
 
@@ -27,7 +28,7 @@ app.set("trust proxy", 1);
 // Security headers
 app.use(helmet());
 
-// CORS — explicit origin allowlist
+// CORS - explicit origin allowlist
 const allowedOrigins = env.CORS_ORIGINS.split(",").map((s) => s.trim());
 app.use(
   cors({
@@ -61,7 +62,7 @@ app.post(
   handleStripeWebhook,
 );
 
-// JSON body — limit to prevent abuse
+// JSON body - limit to prevent abuse
 app.use(express.json({ limit: "512kb" }));
 
 // Cookie parsing for refresh tokens
@@ -78,13 +79,14 @@ app.use("/api/v1/staff", staffRouter);
 app.use("/api/v1/admin/catalog", adminCatalogRouter);
 app.use("/api/v1/promotions", promosRouter);
 app.use("/api/v1/analytics", analyticsRouter);
+app.use("/api/v1/site", siteRouter);
 
 // 404 fallback
 app.use((_req, res) => {
   res.status(404).json({ error: "NOT_FOUND", message: "Resource not found" });
 });
 
-// Global error handler — must be last
+// Global error handler - must be last
 app.use(errorHandler);
 
 export default app;

@@ -1,16 +1,26 @@
 import SiteFooter from "./SiteFooter.jsx";
 import LaserFlow from "../components/LaserFlow.jsx";
 import { useTheme } from "../theme/useTheme.js";
+import { useMobileShell } from "../hooks/useMediaQuery.js";
 
-/** Same laser + footer card as the landing page `LaserRevealSection` — single source of truth. */
 export default function LaserFooterRevealSection() {
+  const isMobile = useMobileShell();
   const { isDark } = useTheme();
+
+  if (isMobile) {
+    return (
+      <div className="site-footer-mobile-root">
+        <SiteFooter />
+      </div>
+    );
+  }
+
   const laserColor = isDark ? "#CF9EFF" : "#7c3aed";
 
   return (
     <section
       className="laser-reveal-section scroll-reveal relative w-full overflow-hidden"
-      style={{ height: "clamp(320px, 55vw, 840px)" }}
+      style={{ height: "clamp(320px, 55vw, 940px)" }}
       aria-hidden
     >
       <LaserFlow

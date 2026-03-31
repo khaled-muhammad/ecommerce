@@ -25,3 +25,5 @@ export {
 export { auditLogs } from "./auditLog.js";
 
 export { userAddresses, userPaymentMethods } from "./profile.js";
+
+export { storeSettings, contactInquiries } from "./site.js";

@@ -1,4 +1,4 @@
-/* Full-width BorderGlow row for auth — overrides default fit-content pill when needed */
+/* Full-width BorderGlow row for auth - overrides default fit-content pill when needed */
 .auth-google-border-glow.border-glow-card {
   display: flex;
   width: 100%;

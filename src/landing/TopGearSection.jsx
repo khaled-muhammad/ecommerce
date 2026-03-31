@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CardSwap, { Card } from "../components/CardSwap.jsx";
@@ -31,6 +31,14 @@ export default function TopGearSection() {
     return () => ctx.revert();
   }, []);
 
+  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const gearCards = [
     {
       image: landingImages.gearWinter,
@@ -55,11 +63,12 @@ export default function TopGearSection() {
     },
   ];
 
-  const swapWidth = 520;
-  const swapHeight = 400;
+  const isMobile = windowWidth < 768;
+  const swapWidth = isMobile ? 320 : 520;
+  const swapHeight = isMobile ? 340 : 400;
 
   return (
-    <section ref={sectionRef} className="section-bg py-16 lg:py-24">
+    <section ref={sectionRef} className="section-bg section-padding">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div className="top-gear-row flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-10 xl:gap-14">
           <div className="max-w-xl shrink-0 lg:max-w-[min(100%,26rem)] xl:max-w-md">
@@ -77,8 +86,8 @@ export default function TopGearSection() {
           </div>
 
           <div
-            className="top-gear-card-swap relative w-full min-w-0 flex-1"
-            style={{ height: "600px", position: "relative" }}
+            className="top-gear-card-swap relative flex w-full min-w-0 flex-1 items-center justify-center"
+            style={{ height: isMobile ? "440px" : "600px", position: "relative" }}
           >
             <CardSwap
               width={swapWidth}

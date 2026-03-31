@@ -36,7 +36,7 @@ export type Env = z.infer<typeof envSchema>;
 
 function loadEnv(): Env {
   if (process.env.NODE_ENV !== "production") {
-    // Load `backend/.env` explicitly — cwd may be repo root when using tsx/node from elsewhere
+    // Load `backend/.env` explicitly - cwd may be repo root when using tsx/node from elsewhere
     const fromPackage = path.join(backendRoot, ".env");
     dotenv.config({ path: fromPackage });
     if (!process.env.DATABASE_URL) {

@@ -15,7 +15,7 @@ function getCartSessionId(req: { headers: Record<string, unknown>; cookies: Reco
   if (typeof fromHeader === "string" && fromHeader) return fromHeader;
   const fromCookie = req.cookies?.cart_session;
   if (typeof fromCookie === "string" && fromCookie) return fromCookie;
-  // Generate one if not present — caller should persist it
+  // Generate one if not present - caller should persist it
   return randomUUID();
 }
 

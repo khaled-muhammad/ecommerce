@@ -25,7 +25,7 @@ function buildSpaOAuthRedirect(
   return u.toString();
 }
 
-/** True when the store has no owner/admin yet — next new account becomes bootstrap owner. */
+/** True when the store has no owner/admin yet - next new account becomes bootstrap owner. */
 async function hasOwnerOrAdmin(): Promise<boolean> {
   const [row] = await db
     .select({ n: sql<number>`count(*)::int` })
@@ -265,7 +265,7 @@ router.get("/me", requireAuth, async (req, res, next) => {
 
 const googleAuthQuerySchema = z.object({
   redirect: z.string().optional().default("/"),
-  /** sign-in vs sign-up — same OAuth flow (find or create); used for analytics/state. */
+  /** sign-in vs sign-up - same OAuth flow (find or create); used for analytics/state. */
   mode: z.enum(["sign-in", "sign-up"]).optional().default("sign-in"),
 });
 
@@ -340,7 +340,7 @@ router.get("/google/callback", async (req, res, next) => {
 
     const googleUser = await userRes.json();
 
-    // Find or create user (same handler for “sign in” and “sign up” — OAuth is account linking + creation)
+    // Find or create user (same handler for “sign in” and “sign up” - OAuth is account linking + creation)
     let [user] = await db.select().from(oauthAccounts)
       .innerJoin(users, eq(oauthAccounts.userId, users.id))
       .where(eq(oauthAccounts.providerAccountId, String(googleUser.sub)))

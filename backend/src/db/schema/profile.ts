@@ -25,7 +25,7 @@ export const userAddresses = pgTable(
   ],
 );
 
-/** Demo saved cards — display only; not tokenized with Stripe in this flow */
+/** Demo saved cards - display only; not tokenized with Stripe in this flow */
 export const userPaymentMethods = pgTable(
   "user_payment_methods",
   {

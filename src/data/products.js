@@ -1,7 +1,4 @@
-/**
- * Demo hardware catalog — swap for API/CMS in production.
- * Prices are integer USD cents.
- */
+/** Demo catalog (USD cents). Replace with API in production. */
 
 import { CATEGORIES } from "./categories.js";
 
@@ -45,7 +42,7 @@ export const PRODUCTS = [
     brand: "AMD",
     priceCents: 38499,
     compareAtCents: 42999,
-    shortDescription: "8C/16T gaming CPU with 3D V-Cache — top pick for high-FPS titles.",
+    shortDescription: "8C/16T gaming CPU with 3D V-Cache - top pick for high-FPS titles.",
     description:
       "Zen 4 architecture with stacked L3 for exceptional frame times in CPU-bound games. Efficient under load and drop-in compatible with AM5 boards and DDR5 memory.",
     specs: {
@@ -68,7 +65,7 @@ export const PRODUCTS = [
     categoryId: "cpus",
     brand: "Intel",
     priceCents: 34999,
-    shortDescription: "Hybrid architecture — strong all-rounder for work and play.",
+    shortDescription: "Hybrid architecture - strong all-rounder for work and play.",
     description:
       "Performance and Efficient cores give you flexibility for streaming, compiling, and gaming. Pair with a Z790 board and quality cooling for best results.",
     specs: {
@@ -89,7 +86,7 @@ export const PRODUCTS = [
     categoryId: "cpus",
     brand: "AMD",
     priceCents: 19999,
-    shortDescription: "Solid AM5 entry — great for 1080p/1440p builds on a budget.",
+    shortDescription: "Solid AM5 entry - great for 1080p/1440p builds on a budget.",
     description:
       "Six fast Zen 4 cores with integrated RDNA 2 graphics for troubleshooting or light use without a discrete GPU.",
     specs: { Cores: "6", Threads: "12", Socket: "AM5", "Max boost": "5.1 GHz", TDP: "65W" },
@@ -142,7 +139,7 @@ export const PRODUCTS = [
     brand: "NVIDIA",
     priceCents: 37999,
     shortDescription: "Efficient 1080p/1440p card for compact cases.",
-    description: "Lower power draw with full RTX feature set — great for SFF and first-time builders.",
+    description: "Lower power draw with full RTX feature set - great for SFF and first-time builders.",
     specs: { VRAM: "8GB", Power: "~180W", Slot: "Dual-slot" },
     stock: 25,
     image: I.gpu,
@@ -184,7 +181,7 @@ export const PRODUCTS = [
     categoryId: "motherboards",
     brand: "Gigabyte",
     priceCents: 15999,
-    shortDescription: "Micro-ATX AM5 — compact without cutting essentials.",
+    shortDescription: "Micro-ATX AM5 - compact without cutting essentials.",
     description: "Strong VRM for 8-core CPUs, PCIe 4.0 GPU slot, and dual M.2 for NVMe builds.",
     specs: { Socket: "AM5", "Form factor": "Micro-ATX", Memory: "DDR5" },
     stock: 30,
@@ -214,7 +211,7 @@ export const PRODUCTS = [
     brand: "Corsair",
     priceCents: 17999,
     shortDescription: "High-capacity kit for creators and heavy multitasking.",
-    description: "Reliable Vengeance line with black heatspreaders — great for workstations and RAM-hungry builds.",
+    description: "Reliable Vengeance line with black heatspreaders - great for workstations and RAM-hungry builds.",
     specs: { Capacity: "64GB (2×32GB)", Speed: "5600 MT/s", Voltage: "1.25V" },
     stock: 16,
     image: I.ram,
@@ -229,7 +226,7 @@ export const PRODUCTS = [
     priceCents: 16999,
     compareAtCents: 19999,
     shortDescription: "PCIe 4.0 flagship speeds for OS, games, and scratch disks.",
-    description: "High endurance and consistent sustained writes — a favorite for primary drives and laptops (check form factor).",
+    description: "High endurance and consistent sustained writes - a favorite for primary drives and laptops (check form factor).",
     specs: { Interface: "PCIe 4.0 ×4", "Form factor": "M.2 2280", "Seq. read / write": "~7450 / 6900 MB/s" },
     stock: 35,
     image: I.ssd,
@@ -271,7 +268,7 @@ export const PRODUCTS = [
     brand: "Corsair",
     priceCents: 11999,
     shortDescription: "Fully modular, quiet fan curve, ATX 3.0 friendly.",
-    description: "Reliable RM platform for mid/high GPUs — includes native 12VHPWR options on partner revisions.",
+    description: "Reliable RM platform for mid/high GPUs - includes native 12VHPWR options on partner revisions.",
     specs: { Wattage: "850W", Efficiency: "80+ Gold", Modular: "Full" },
     stock: 28,
     image: I.psu,
@@ -285,7 +282,7 @@ export const PRODUCTS = [
     brand: "Seasonic",
     priceCents: 10999,
     shortDescription: "Compact ATX PSU with tight voltage regulation.",
-    description: "Seasonic quality for long-term stability — ideal for efficient single-GPU builds.",
+    description: "Seasonic quality for long-term stability - ideal for efficient single-GPU builds.",
     specs: { Wattage: "750W", Efficiency: "80+ Gold", Modular: "Full" },
     stock: 24,
     image: I.psu,
@@ -312,7 +309,7 @@ export const PRODUCTS = [
     categoryId: "cases",
     brand: "Lian Li",
     priceCents: 18999,
-    shortDescription: "Dual-chamber showcase case — radiator friendly.",
+    shortDescription: "Dual-chamber showcase case - radiator friendly.",
     description: "Dual tempered glass panels and flexible motherboard tray orientation for custom loops or AIOs.",
     specs: { "Form factor": "Full ATX", "Radiator support": "Top/side/bottom", Material: "Aluminum + glass" },
     stock: 8,
@@ -326,7 +323,7 @@ export const PRODUCTS = [
     categoryId: "cooling",
     brand: "ARCTIC",
     priceCents: 11999,
-    shortDescription: "360mm AIO with integrated VRM fan — excellent value.",
+    shortDescription: "360mm AIO with integrated VRM fan - excellent value.",
     description: "Strong cooling per dollar, low noise profile, and wide socket support including AM5/LGA1700.",
     specs: { Size: "360mm", Fans: "3× ARCTIC P14", Pump: "Integrated in radiator" },
     stock: 19,
@@ -341,7 +338,7 @@ export const PRODUCTS = [
     categoryId: "cooling",
     brand: "Noctua",
     priceCents: 10999,
-    shortDescription: "Twin-tower air cooler — whisper quiet under load.",
+    shortDescription: "Twin-tower air cooler - whisper quiet under load.",
     description: "Industry reference for air cooling clearance and acoustic performance. Includes NT-H2 paste.",
     specs: { Type: "Dual-tower air", Fans: "2× NF-A15 PWM", Height: "165mm" },
     stock: 15,
@@ -355,7 +352,7 @@ export const PRODUCTS = [
     categoryId: "cooling",
     brand: "Thermalright",
     priceCents: 2499,
-    shortDescription: "Budget tower cooler — great for 65W CPUs.",
+    shortDescription: "Budget tower cooler - great for 65W CPUs.",
     description: "Single-tower design with PWM fan. Easy install and solid thermals for entry builds.",
     specs: { Type: "Single-tower", Height: "~154mm", TDP: "~225W (mfg)" },
     stock: 42,

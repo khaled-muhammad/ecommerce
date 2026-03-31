@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import GlassSurface from "../components/GlassSurface.jsx";
+import AuthGlassSurface from "./AuthGlassSurface.jsx";
 import AuthPageShell, { AUTH_FORM_GLASS_PROPS } from "./AuthPageShell.jsx";
 import { useAuth } from "../auth/useAuth.js";
 
@@ -8,20 +8,15 @@ const STAFF_ROLES = new Set(["owner", "admin"]);
 
 export default function AdminSetupPage() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      navigate("/sign-in", { replace: true });
-      return;
-    }
-    if (!STAFF_ROLES.has(user.role)) {
+    if (user && !STAFF_ROLES.has(user.role)) {
       navigate("/", { replace: true });
     }
-  }, [loading, user, navigate]);
+  }, [user, navigate]);
 
-  if (loading || !user || !STAFF_ROLES.has(user.role)) {
+  if (!STAFF_ROLES.has(user.role)) {
     return (
       <AuthPageShell>
         <div className="flex min-h-[50vh] items-center justify-center font-ui text-sm text-[color:var(--vexo-text-secondary)]">
@@ -33,7 +28,7 @@ export default function AdminSetupPage() {
 
   return (
     <AuthPageShell>
-      <GlassSurface
+      <AuthGlassSurface
         {...AUTH_FORM_GLASS_PROPS}
         borderRadius={24}
         width="100%"
@@ -57,7 +52,7 @@ export default function AdminSetupPage() {
           </div>
 
           <ul className="list-inside list-disc space-y-2 font-ui text-sm text-[color:var(--vexo-text-secondary)]">
-            <li>Keep this account secure — it can grant access to others.</li>
+            <li>Keep this account secure - it can grant access to others.</li>
             <li>Invite additional admins from staff management when your tooling is wired up.</li>
             <li>Customers who register later will have the default shopper role only.</li>
           </ul>
@@ -75,7 +70,7 @@ export default function AdminSetupPage() {
             </Link>
           </p>
         </div>
-      </GlassSurface>
+      </AuthGlassSurface>
     </AuthPageShell>
   );
 }

@@ -1,7 +1,9 @@
 import { Outlet, useLocation } from "react-router-dom";
+import AuthBootstrapScreen from "../components/AuthBootstrapScreen.jsx";
 import SiteShellSprite from "../components/site-shell/SiteShellSprite.jsx";
 import SiteShellSafeArea from "../components/site-shell/SiteShellSafeArea.jsx";
 import SiteShellNav from "../components/site-shell/SiteShellNav.jsx";
+import { useAuth } from "../auth/useAuth.js";
 import LaserFooterRevealSection from "./LaserFooterRevealSection.jsx";
 import SideCart from "../cart/SideCart.jsx";
 import "./site-shell.css";
@@ -17,11 +19,21 @@ const heroFill = {
 };
 
 export default function MainLayout() {
+  const { loading } = useAuth();
   const { pathname } = useLocation();
   const isLanding = pathname === "/";
-  const isAuthPage = pathname === "/sign-in" || pathname === "/register";
+  const isAuthPage =
+    pathname === "/sign-in" || pathname === "/register" || pathname === "/contact" || pathname === "/support";
   const isAdminHub = pathname === "/admin" || pathname.startsWith("/admin/");
   const hidePageTail = isLanding || isAuthPage;
+
+  if (loading) {
+    return (
+      <div className="site-root-vars min-h-full">
+        <AuthBootstrapScreen />
+      </div>
+    );
+  }
 
   return (
     <>

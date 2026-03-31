@@ -34,7 +34,7 @@ export default function ProductGrid() {
     { name: "Mid-Tower ATX Airflow", price: "USD 99.00", badge: "Case" },
     { name: "360mm AIO Liquid Cooler", price: "USD 149.00", badge: "Cooling" },
     { name: "Wi-Fi 6E PCIe Adapter", price: "USD 79.00", badge: "Networking" },
-    { name: "Mechanical KB — Tactile", price: "USD 119.00", badge: "Peripherals" },
+    { name: "Mechanical KB - Tactile", price: "USD 119.00", badge: "Peripherals" },
     { name: '27" QHD 165Hz IPS', price: "USD 329.00", badge: "Display" },
   ];
 
@@ -45,7 +45,7 @@ export default function ProductGrid() {
   }));
 
   return (
-    <section className="section-bg py-16 lg:py-24">
+    <section className="section-bg section-padding">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div className="mb-10 flex flex-col lg:mb-14 lg:flex-row lg:items-center lg:justify-between">
           <span className="scroll-reveal text-xs font-medium uppercase tracking-wider text-vexo-text-muted">
@@ -64,7 +64,7 @@ export default function ProductGrid() {
           </Link>
         </div>
 
-        <div className="grid-stagger mx-auto grid max-w-[1200px] grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
+        <div className="grid-stagger mx-auto grid max-w-[1200px] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
           {products.map((product) => (
             <div
               key={product.id}

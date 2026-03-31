@@ -1,7 +1,35 @@
 import { useEffect, useState, useRef, useId } from 'react';
 import './GlassSurface.css';
 
-const GlassSurface = ({
+function GlassSurfacePerformant({
+  children,
+  width = 200,
+  height = 80,
+  borderRadius = 20,
+  backgroundOpacity = 0,
+  saturation = 1,
+  backdropBlur = null,
+  className = '',
+  style = {}
+}) {
+  const containerStyle = {
+    ...style,
+    width: typeof width === 'number' ? `${width}px` : width,
+    height: typeof height === 'number' ? `${height}px` : height,
+    borderRadius: `${borderRadius}px`,
+    '--glass-frost': backgroundOpacity,
+    '--glass-saturation': saturation,
+    '--glass-perf-blur': backdropBlur != null ? `${backdropBlur}px` : '12px',
+  };
+
+  return (
+    <div className={`glass-surface glass-surface--performant ${className}`} style={containerStyle}>
+      <div className="glass-surface__content">{children}</div>
+    </div>
+  );
+}
+
+function GlassSurfaceFull({
   children,
   width = 200,
   height = 80,
@@ -20,11 +48,10 @@ const GlassSurface = ({
   xChannel = 'R',
   yChannel = 'G',
   mixBlendMode = 'difference',
-  /** Extra Gaussian backdrop blur (px) before the glass filter; improves frosted read on busy backdrops */
   backdropBlur = null,
   className = '',
   style = {}
-}) => {
+}) {
   const uniqueId = useId().replace(/:/g, '-');
   const filterId = `glass-filter-${uniqueId}`;
   const redGradId = `red-grad-${uniqueId}`;
@@ -240,6 +267,10 @@ const GlassSurface = ({
       <div className="glass-surface__content">{children}</div>
     </div>
   );
-};
+}
 
-export default GlassSurface;
+/** @param {boolean} [performant] Lighter CSS path (e.g. mobile auth). */
+export default function GlassSurface({ performant = false, ...props }) {
+  if (performant) return <GlassSurfacePerformant {...props} />;
+  return <GlassSurfaceFull {...props} />;
+}

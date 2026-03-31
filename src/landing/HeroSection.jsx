@@ -105,7 +105,6 @@ export default function HeroSection() {
             <div className="relative w-full pb-6 lg:pb-2">
               <HeroPCModel />
 
-              {/* Desktop: vertically centered on the 3D card, to the right — same viewport band as the PC (no scroll) */}
               <div className="hero-right pointer-events-none mt-5 flex justify-end sm:mt-6 lg:absolute lg:right-0 lg:top-1/3 lg:z-20 lg:mt-0 lg:-translate-y-1/2 lg:pl-2 lg:-mr-2 xl:-mr-32">
                 <div className="pointer-events-auto w-full max-w-[min(100%,280px)] sm:max-w-[300px] lg:w-[min(34vw,340px)] lg:max-w-none lg:shrink-0 xl:w-[min(32vw,360px)]">
                   <Dialog.Root open={videoOpen} onOpenChange={setVideoOpen}>

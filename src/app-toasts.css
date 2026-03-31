@@ -1,4 +1,4 @@
-/* Toastify overrides — Roxy shell (paper / ink / Saira), load after ReactToastify.css */
+/* Toastify overrides - Roxy shell (paper / ink / Saira), load after ReactToastify.css */
 
 .site-root-vars.roxy-toast-host.Toastify__toast-container {
   color: transparent;
@@ -101,7 +101,7 @@
   color: #dc2626;
 }
 
-/* Progress bar — subtle ink tint */
+/* Progress bar - subtle ink tint */
 .site-root-vars.roxy-toast-host .Toastify__progress-bar {
   height: 3px;
   border-radius: 0 0 13px 13px;

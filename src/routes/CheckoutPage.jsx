@@ -49,7 +49,7 @@ export default function CheckoutPage() {
     <div className="mx-auto w-full max-w-[min(100%,1040px)] px-4 pb-20 pt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5.25rem))] md:px-6 lg:px-8">
       <h1 className="font-ui-medium text-3xl tracking-[-0.03em] text-[color:var(--ink)] md:text-4xl">Checkout</h1>
       <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-[color:color-mix(in_srgb,var(--ink)_72%,transparent)]">
-        Demo checkout — no card is charged. Submitting the form simulates a successful order and clears your cart.
+        Demo checkout - no card is charged. Submitting the form simulates a successful order and clears your cart.
       </p>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_340px] lg:items-start">

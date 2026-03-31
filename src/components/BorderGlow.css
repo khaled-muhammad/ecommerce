@@ -140,7 +140,7 @@
   z-index: 1;
 }
 
-/* Compact pill — main CTAs (full rounding, no heavy card shadow) */
+/* Compact pill - main CTAs (full rounding, no heavy card shadow) */
 .border-glow-card.border-glow-card--pill {
   display: inline-flex;
   width: fit-content;

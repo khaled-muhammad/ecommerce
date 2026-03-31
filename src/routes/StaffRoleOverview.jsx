@@ -37,28 +37,28 @@ export default function StaffRoleOverview({ role }) {
         <p className="font-medium text-[color:var(--ink)]">What is available today</p>
         <ul className="mt-3 list-inside list-disc space-y-2">
           <li>
-            <strong className="text-[color:var(--ink)]">Store owner</strong> — full staff hub (every delegated role’s tools in this app)
+            <strong className="text-[color:var(--ink)]">Store owner</strong> - full staff hub (every delegated role’s tools in this app)
           </li>
           <li>
-            <strong className="text-[color:var(--ink)]">Admin</strong> — staff, catalog, customers, promotions, analytics
+            <strong className="text-[color:var(--ink)]">Admin</strong> - staff, catalog, customers, promotions, analytics
           </li>
           <li>
-            <strong className="text-[color:var(--ink)]">Manager</strong> — customers, promotions, analytics
+            <strong className="text-[color:var(--ink)]">Manager</strong> - customers, promotions, analytics
           </li>
           <li>
-            <strong className="text-[color:var(--ink)]">Support</strong> — customer lookup
+            <strong className="text-[color:var(--ink)]">Support</strong> - customer lookup
           </li>
           <li>
-            <strong className="text-[color:var(--ink)]">Analyst</strong> — analytics only
+            <strong className="text-[color:var(--ink)]">Analyst</strong> - analytics only
           </li>
           <li>
-            <strong className="text-[color:var(--ink)]">Fulfillment</strong> — Orders tab (pipeline + notes); content tools when added
+            <strong className="text-[color:var(--ink)]">Fulfillment</strong> - Orders tab (pipeline + notes); content tools when added
           </li>
           <li>
-            <strong className="text-[color:var(--ink)]">Content editor</strong> — this overview until scoped catalog APIs exist
+            <strong className="text-[color:var(--ink)]">Content editor</strong> - this overview until scoped catalog APIs exist
           </li>
           <li>
-            <strong className="text-[color:var(--ink)]">Customer</strong> — no staff hub (shopper account only)
+            <strong className="text-[color:var(--ink)]">Customer</strong> - no staff hub (shopper account only)
           </li>
         </ul>
       </div>

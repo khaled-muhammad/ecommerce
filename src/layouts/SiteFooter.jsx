@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import FooterSocialLinks from "../components/FooterSocialLinks.jsx";
 import "./site-footer.css";
 
 export default function SiteFooter() {
@@ -57,13 +58,27 @@ export default function SiteFooter() {
                 </li>
               </ul>
             </nav>
+
+            <nav aria-label="Help">
+              <h2 className="site-footer__col-title">Help</h2>
+              <ul className="site-footer__links">
+                <li>
+                  <Link to="/contact">Contact</Link>
+                </li>
+                <li>
+                  <Link to="/support">Support</Link>
+                </li>
+              </ul>
+            </nav>
           </div>
+
+          <FooterSocialLinks className="site-footer__social-wrap" />
 
           <div className="site-footer__bottom">
             <p className="site-footer__legal">© {new Date().getFullYear()} Roxy. Demo storefront.</p>
             <p className="site-footer__legal">
-              <a href="#">Contact</a>
-              <a href="#">Support</a>
+              <Link to="/contact">Contact</Link>
+              <Link to="/support">Support</Link>
             </p>
           </div>
         </div>

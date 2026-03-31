@@ -42,10 +42,6 @@ export default function HomePage() {
             opacity: 0,
             duration: 0.9,
             ease: "power2.out",
-            /**
-             * Fade only — no scale. Scale on this node made the canvas layout drift when
-             * `clearProps` removed `transform` (~0.9s), which read as a model “jump”.
-             */
             clearProps: "opacity",
           },
           "-=0.6",

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import GlassSurface from "../components/GlassSurface.jsx";
+import AuthGlassSurface from "./AuthGlassSurface.jsx";
 import GoogleOAuthBorderButton from "../components/GoogleOAuthBorderButton.jsx";
 import AuthPageShell, { AUTH_FORM_GLASS_PROPS } from "./AuthPageShell.jsx";
 import AuthEmailDivider from "./AuthEmailDivider.jsx";
@@ -35,7 +35,7 @@ export default function RegisterPage() {
     setSubmitting(true);
     try {
       const { adminBootstrap } = await register({ email: email.trim(), password, name: name.trim() });
-      toast.success(adminBootstrap ? "You are the store owner — finish setup below." : "Account created");
+      toast.success(adminBootstrap ? "You are the store owner - finish setup below." : "Account created");
       navigate(adminBootstrap ? "/admin/setup" : "/", { replace: true });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Registration failed");
@@ -46,7 +46,7 @@ export default function RegisterPage() {
 
   return (
     <AuthPageShell>
-      <GlassSurface
+      <AuthGlassSurface
         {...AUTH_FORM_GLASS_PROPS}
         borderRadius={24}
         width="100%"
@@ -180,7 +180,7 @@ export default function RegisterPage() {
             </Link>
           </p>
         </form>
-      </GlassSurface>
+      </AuthGlassSurface>
     </AuthPageShell>
   );
 }

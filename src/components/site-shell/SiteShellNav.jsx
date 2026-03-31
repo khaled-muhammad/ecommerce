@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Moon, ShoppingCart, Sun } from "lucide-react";
-import { useTheme } from "../../theme/useTheme.js";
+import { Menu, ShoppingCart } from "lucide-react";
 import { useCart } from "../../cart/useCart.js";
 import { useAuth } from "../../auth/useAuth.js";
+import { useMobileShell } from "../../hooks/useMediaQuery.js";
 import NavShopSearch from "./NavShopSearch.jsx";
 import NavAccountMenu from "./NavAccountMenu.jsx";
+import NavThemeToggle from "./NavThemeToggle.jsx";
+import SiteMobileMenu from "./SiteMobileMenu.jsx";
 
 const SCROLL_TOP_REVEAL = 56;
 const SCROLL_DELTA = 6;
@@ -103,22 +105,6 @@ function NavBrand() {
   );
 }
 
-function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
-  const dark = theme === "dark";
-  return (
-    <button
-      type="button"
-      className="site-theme-toggle"
-      onClick={toggleTheme}
-      aria-label={dark ? "Use light theme" : "Use dark theme"}
-      aria-pressed={dark}
-    >
-      {dark ? <Sun className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden /> : <Moon className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden />}
-    </button>
-  );
-}
-
 function NavActions() {
   const { itemCount } = useCart();
   const { user, loading } = useAuth();
@@ -133,7 +119,7 @@ function NavActions() {
 
   return (
     <div className="site-nav-aside">
-      <ThemeToggle />
+      <NavThemeToggle />
       {user ? (
         <NavAccountMenu displayName={displayName} email={user.email} />
       ) : (
@@ -162,11 +148,58 @@ function NavActions() {
   );
 }
 
+function MobileNavBar({ menuOpen, setMenuOpen, menuDomId }) {
+  const { itemCount } = useCart();
+
+  const badge =
+    itemCount > 0 ? (
+      <span className="site-nav-cart-badge" aria-hidden>
+        {itemCount > 99 ? "99+" : itemCount}
+      </span>
+    ) : null;
+
+  return (
+    <div className="site-top-nav-inner site-top-nav-inner--mobile">
+      <button
+        type="button"
+        className="site-mobile-nav-trigger"
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+        aria-expanded={menuOpen}
+        aria-controls={menuDomId}
+        onClick={() => setMenuOpen((o) => !o)}
+      >
+        <Menu className="h-6 w-6" strokeWidth={2} aria-hidden />
+      </button>
+
+      <NavBrand />
+
+      <div className="site-top-nav-mobile-actions">
+        <NavThemeToggle />
+        <NavLink
+          to="/cart"
+          end
+          aria-label={itemCount > 0 ? `Cart, ${itemCount} items` : "Cart"}
+          className={({ isActive }) =>
+            `site-nav-cart-trigger site-top-nav-a${isActive ? " site-nav-link--active" : ""}`.trim()
+          }
+        >
+          <ShoppingCart className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden />
+          {badge}
+        </NavLink>
+      </div>
+    </div>
+  );
+}
+
 export default function SiteShellNav() {
+  const isMobile = useMobileShell();
   const [scrollHidden, setScrollHidden] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const lastY = useRef(0);
   const frame = useRef(0);
   const navRef = useRef(null);
+  const rawMenuId = useId();
+  const menuDomId = `site-mobile-menu-${rawMenuId.replace(/:/g, "")}`;
 
   useEffect(() => {
     lastY.current = window.scrollY;
@@ -195,33 +228,53 @@ export default function SiteShellNav() {
     };
   }, []);
 
+  useEffect(() => {
+    if (isMobile) return;
+    const id = requestAnimationFrame(() => setMobileMenuOpen(false));
+    return () => cancelAnimationFrame(id);
+  }, [isMobile]);
+
+  const dockHidden = scrollHidden && !mobileMenuOpen;
+
   return (
     <div
-      className={`site-nav-dock${scrollHidden ? " site-nav-dock--scroll-hidden" : ""}`}
-      inert={scrollHidden ? true : undefined}
+      className={`site-nav-dock${dockHidden ? " site-nav-dock--scroll-hidden" : ""}`}
+      inert={dockHidden ? true : undefined}
     >
       <nav
         ref={navRef}
-        className="site-top-nav site-top-nav-bar"
+        className={`site-top-nav site-top-nav-bar${isMobile ? " site-top-nav--mobile" : ""}`}
         style={navBarStyle}
         aria-label="Main"
       >
         <div className="site-top-nav-bg" aria-hidden />
 
-        <div className="site-top-nav-inner">
-          <div className="site-top-nav-start">
-            <NavPrimaryLinks />
-          </div>
+        {isMobile ? (
+          <MobileNavBar menuOpen={mobileMenuOpen} setMenuOpen={setMobileMenuOpen} menuDomId={menuDomId} />
+        ) : (
+          <div className="site-top-nav-inner">
+            <div className="site-top-nav-start">
+              <NavPrimaryLinks />
+            </div>
             <NavBrand />
-          <div className="site-top-nav-end">
-            <NavShopSearch navRef={navRef} />
-            <NavActions />
+            <div className="site-top-nav-end">
+              <NavShopSearch navRef={navRef} />
+              <NavActions />
+            </div>
           </div>
-        </div>
+        )}
 
-        <NavCorner side="left" />
-        <NavCorner side="right" />
+        {!isMobile ? (
+          <>
+            <NavCorner side="left" />
+            <NavCorner side="right" />
+          </>
+        ) : null}
       </nav>
+
+      {isMobile ? (
+        <SiteMobileMenu open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} menuDomId={menuDomId} />
+      ) : null}
     </div>
   );
 }

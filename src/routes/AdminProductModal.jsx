@@ -558,7 +558,7 @@ export default function AdminProductModal({
                         <p className="text-sm leading-relaxed text-[color:color-mix(in_srgb,var(--ink)_55%,transparent)]">
                           {blueprint.fields.length > 0 ? (
                             <>
-                              Fields below match <strong className="font-semibold text-[color:var(--ink)]">{selectedCategory?.title ?? "this category"}</strong>. Skip anything that does not apply — only filled rows are saved.
+                              Fields below match <strong className="font-semibold text-[color:var(--ink)]">{selectedCategory?.title ?? "this category"}</strong>. Skip anything that does not apply - only filled rows are saved.
                             </>
                           ) : (
                             <>
@@ -578,7 +578,7 @@ export default function AdminProductModal({
                                   className={inputBase}
                                   value={schemaValues[f.key] ?? ""}
                                   onChange={(e) => setSchemaField(f.key, e.target.value)}
-                                  placeholder={f.placeholder ?? "—"}
+                                  placeholder={f.placeholder ?? "-"}
                                 />
                               </div>
                             ))}
@@ -700,7 +700,7 @@ export default function AdminProductModal({
                           </p>
                           <div className="mt-5 flex flex-wrap items-baseline gap-3">
                             <span className="text-3xl font-semibold tracking-tight text-[color:var(--ink)]">
-                              {dollarsToCents(price) != null ? formatUsd(dollarsToCents(price)) : "—"}
+                              {dollarsToCents(price) != null ? formatUsd(dollarsToCents(price)) : "-"}
                             </span>
                             {compareAt.trim() && dollarsToCents(compareAt) != null ? (
                               <span className="text-base text-[color:color-mix(in_srgb,var(--ink)_38%,transparent)] line-through">{formatUsd(dollarsToCents(compareAt))}</span>

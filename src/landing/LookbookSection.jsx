@@ -111,14 +111,14 @@ export default function LookbookSection() {
       <span
         key={`${suffix}-${i}`}
         className="watermark-text mx-8 font-black"
-        style={{ fontSize: "clamp(60px, 12vw, 140px)" }}
+        style={{ fontSize: "clamp(40px, 10vw, 120px)" }}
       >
         GREAT HARDWARE GREAT BUILDS
       </span>
     ));
 
   return (
-    <section ref={sectionRef} className="section-bg relative overflow-hidden py-20 lg:py-32">
+    <section ref={sectionRef} className="section-bg section-padding relative overflow-hidden">
       <div className="pointer-events-none absolute left-0 top-1/2 w-full -translate-y-1/2 overflow-hidden">
         <div className="animate-marquee flex w-max whitespace-nowrap">
           <div className="flex shrink-0">{marqueeStrip("a")}</div>

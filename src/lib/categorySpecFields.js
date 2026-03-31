@@ -1,7 +1,4 @@
-/**
- * Preferred spec fields per category slug (matches seeded catalog categories).
- * Stored in DB as flat { [key]: value } — keys are the labels shoppers see on the product page.
- */
+/** Admin product specs by category slug; keys match shopper-facing labels on the PDP. */
 
 /** @typedef {{ key: string; label: string; placeholder?: string }} SpecFieldDef */
 
@@ -100,19 +97,11 @@ export const CATEGORY_SPEC_BLUEPRINTS = {
 
 const EMPTY_BLUEPRINT = { title: "Product", fields: [] };
 
-/**
- * @param {string | undefined} categorySlug
- */
 export function getCategorySpecBlueprint(categorySlug) {
   if (!categorySlug) return EMPTY_BLUEPRINT;
   return CATEGORY_SPEC_BLUEPRINTS[categorySlug] ?? EMPTY_BLUEPRINT;
 }
 
-/**
- * Split stored specs into blueprint field values + extra rows (unknown keys).
- * @param {Record<string, string> | null | undefined} specs
- * @param {string | undefined} categorySlug
- */
 export function specsToFormParts(specs, categorySlug) {
   const { fields } = getCategorySpecBlueprint(categorySlug);
   const schemaKeys = new Set(fields.map((f) => f.key));
@@ -140,11 +129,6 @@ export function specsToFormParts(specs, categorySlug) {
   return { schemaValues, customRows };
 }
 
-/**
- * @param {Record<string, string>} schemaValues
- * @param {{ label: string; value: string }[]} customRows
- * @param {string | undefined} categorySlug
- */
 export function formPartsToSpecs(schemaValues, customRows, categorySlug) {
   const { fields } = getCategorySpecBlueprint(categorySlug);
   /** @type {Record<string, string>} */

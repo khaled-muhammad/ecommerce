@@ -93,7 +93,7 @@ export async function optionalAuth(req: Request, res: Response, next: NextFuncti
       req.user = { id: user.id, email: user.email, role: user.role, sessionId: payload.sessionId };
     }
   } catch {
-    // ignore — treat as unauthenticated
+    // ignore - treat as unauthenticated
   }
   next();
 }

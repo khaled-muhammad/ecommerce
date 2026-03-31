@@ -17,11 +17,16 @@ import CheckoutCompletePage from "./routes/CheckoutCompletePage.jsx";
 import PrivacyPage from "./routes/PrivacyPage.jsx";
 import TermsPage from "./routes/TermsPage.jsx";
 import ProfilePage from "./routes/ProfilePage.jsx";
+import ContactPage from "./routes/ContactPage.jsx";
+import SupportPage from "./routes/SupportPage.jsx";
+import NotFoundPage from "./routes/NotFoundPage.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
+import SiteConfigProvider from "./context/SiteConfigProvider.jsx";
 import { ThemeProvider } from "./theme/ThemeProvider.jsx";
 import { CartProvider } from "./cart/CartProvider.jsx";
 import { AuthProvider } from "./auth/AuthProvider.jsx";
 import OAuthAccessBridge from "./auth/OAuthAccessBridge.jsx";
+import { GuestOnly, RequireAuth, RequireStaffDashboard } from "./auth/RouteGuards.jsx";
 import AppToasts from "./AppToasts.jsx";
 import { SmoothCursor } from "@/components/ui/smooth-cursor";
 
@@ -29,12 +34,13 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ThemeProvider>
       <CartProvider>
-        <SmoothCursor />
-        <BrowserRouter>
-          <AuthProvider>
-            <OAuthAccessBridge />
-            <Routes>
-              <Route path="/" element={<MainLayout />}>
+        <SiteConfigProvider>
+          <SmoothCursor />
+          <BrowserRouter>
+            <AuthProvider>
+              <OAuthAccessBridge />
+              <Routes>
+                <Route path="/" element={<MainLayout />}>
                 <Route index element={<HomePage />} />
                 <Route path="shop" element={<ShopPage />} />
                 <Route path="shop/product/:slug" element={<ProductPage />} />
@@ -43,18 +49,57 @@ createRoot(document.getElementById("root")).render(
                 <Route path="cart" element={<CartPage />} />
                 <Route path="checkout" element={<CheckoutPage />} />
                 <Route path="checkout/complete" element={<CheckoutCompletePage />} />
-                <Route path="sign-in" element={<SignInPage />} />
-                <Route path="register" element={<RegisterPage />} />
-                <Route path="admin/setup" element={<AdminSetupPage />} />
-                <Route path="admin" element={<AdminDashboardPage />} />
-                <Route path="profile" element={<ProfilePage />} />
-                <Route path="privacy" element={<PrivacyPage />} />
-                <Route path="terms" element={<TermsPage />} />
-              </Route>
-            </Routes>
-          </AuthProvider>
-        </BrowserRouter>
-        <AppToasts />
+                <Route
+                  path="sign-in"
+                  element={
+                    <GuestOnly>
+                      <SignInPage />
+                    </GuestOnly>
+                  }
+                />
+                <Route
+                  path="register"
+                  element={
+                    <GuestOnly>
+                      <RegisterPage />
+                    </GuestOnly>
+                  }
+                />
+                <Route
+                  path="admin/setup"
+                  element={
+                    <RequireAuth>
+                      <AdminSetupPage />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="admin"
+                  element={
+                    <RequireStaffDashboard>
+                      <AdminDashboardPage />
+                    </RequireStaffDashboard>
+                  }
+                />
+                <Route
+                  path="profile"
+                  element={
+                    <RequireAuth>
+                      <ProfilePage />
+                    </RequireAuth>
+                  }
+                />
+                  <Route path="contact" element={<ContactPage />} />
+                  <Route path="support" element={<SupportPage />} />
+                  <Route path="privacy" element={<PrivacyPage />} />
+                  <Route path="terms" element={<TermsPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Route>
+              </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+          <AppToasts />
+        </SiteConfigProvider>
       </CartProvider>
     </ThemeProvider>
   </StrictMode>,

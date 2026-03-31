@@ -31,7 +31,7 @@ die() {
 }
 
 need_cmd() {
-  command -v "$1" >/dev/null 2>&1 || die "missing command '$1' — install PostgreSQL client (psql)"
+  command -v "$1" >/dev/null 2>&1 || die "missing command '$1' - install PostgreSQL client (psql)"
 }
 
 validate_ident() {
@@ -92,7 +92,7 @@ main() {
   detect_admin
 
   echo "Ensuring role '$DB_USER' exists (password set / updated)..."
-  # psql does not expand :'var' inside DO $$ ... $$ — use shell-safe literals (DB_* validated; password escaped).
+  # psql does not expand :'var' inside DO $$ ... $$ - use shell-safe literals (DB_* validated; password escaped).
   local pw_lit
   pw_lit=$(sql_escape_literal "$DB_PASSWORD")
   admin_psql -d "$PG_ADMIN_DB" <<SQL
@@ -125,7 +125,8 @@ SQL
   echo "  DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${PGHOST}:${PGPORT}/${DB_NAME}"
   echo ""
   echo "Then (from backend/):"
-  echo "  npx drizzle-kit push"
+  echo "  npm run db:migrate   # apply SQL migrations (store_settings, contact_inquiries, …)"
+  echo "  # or: npm run db:push  # sync schema without migration files (dev only)"
   echo "  npm run seed"
 }
 

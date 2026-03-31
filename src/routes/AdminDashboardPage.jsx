@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { LayoutDashboard } from "lucide-react";
 import { useAuth } from "../auth/useAuth.js";
 import { formatUsd } from "../lib/money.js";
 import {
   canLookupCustomers,
   canManageCatalog,
   canManagePromotions,
+  canManageStoreSettings,
   canStaffAdmin,
   canViewAnalytics,
   canViewOrders,
   getAdminTabsForRole,
-  hasStaffDashboardAccess,
 } from "../lib/staffCapabilities.js";
 import AdminCatalogPanel from "./AdminCatalogPanel.jsx";
+import AdminStorePanel from "./AdminStorePanel.jsx";
 import AdminOrdersPanel from "./AdminOrdersPanel.jsx";
 import StaffRoleOverview from "./StaffRoleOverview.jsx";
 
@@ -60,16 +60,16 @@ function toIsoOrNull(datetimeLocal) {
 }
 
 function formatDate(iso) {
-  if (!iso) return "—";
+  if (!iso) return "-";
   try {
     return new Date(iso).toLocaleString();
   } catch {
-    return "—";
+    return "-";
   }
 }
 
 export default function AdminDashboardPage() {
-  const { user, loading, authorizedFetch } = useAuth();
+  const { user, authorizedFetch } = useAuth();
   const tabs = useMemo(() => (user?.role ? getAdminTabsForRole(user.role) : []), [user?.role]);
   const [tabSelected, setTabSelected] = useState(null);
   const activeTab = useMemo(() => {
@@ -78,7 +78,6 @@ export default function AdminDashboardPage() {
     return tabs[0].id;
   }, [tabSelected, tabs]);
 
-  /* ── Staff (owner / admin) ── */
   const [catalogRoles, setCatalogRoles] = useState([]);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("manager");
@@ -141,7 +140,6 @@ export default function AdminDashboardPage() {
     }
   }
 
-  /* ── Customers ── */
   const [custQuery, setCustQuery] = useState("");
   const [custResults, setCustResults] = useState([]);
   const [custLoading, setCustLoading] = useState(false);
@@ -190,7 +188,6 @@ export default function AdminDashboardPage() {
     [authorizedFetch],
   );
 
-  /* ── Promotions ── */
   const [coupons, setCoupons] = useState([]);
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoForm, setPromoForm] = useState({
@@ -266,7 +263,6 @@ export default function AdminDashboardPage() {
     }
   }
 
-  /* ── Analytics ── */
   const [summary, setSummary] = useState(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [eventBusy, setEventBusy] = useState(false);
@@ -307,30 +303,10 @@ export default function AdminDashboardPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className={`${pageTop} w-full max-w-none px-4 pb-16 font-ui sm:px-6 lg:px-8`}>
-        <p className="text-sm text-[color:color-mix(in_srgb,var(--ink)_55%,transparent)]">Loading…</p>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/sign-in" replace />;
-  }
-
-  if (!hasStaffDashboardAccess(user.role)) {
-    return <Navigate to="/" replace />;
-  }
-
   return (
     <div className={`${pageTop} w-full max-w-none px-4 pb-20 font-ui sm:px-6 lg:px-8`}>
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="mb-2 flex items-center gap-2 text-[color:color-mix(in_srgb,var(--ink)_50%,transparent)]">
-            <LayoutDashboard className="h-5 w-5" strokeWidth={2} aria-hidden />
-            <span className="text-xs font-semibold uppercase tracking-wider">Staff</span>
-          </div>
           <h1 className="font-ui text-2xl font-bold tracking-tight text-[color:var(--ink)]">Staff hub</h1>
           <p className="mt-1 text-sm text-[color:color-mix(in_srgb,var(--ink)_55%,transparent)]">
             Signed in as <span className="font-medium text-[color:var(--ink)]">{user.email}</span>
@@ -364,6 +340,8 @@ export default function AdminDashboardPage() {
       {activeTab === "workspace" && <StaffRoleOverview role={user.role} />}
 
       {activeTab === "catalog" && canManageCatalog(user.role) && <AdminCatalogPanel />}
+
+      {activeTab === "store" && canManageStoreSettings(user.role) && <AdminStorePanel />}
 
       {activeTab === "staff" && canStaffAdmin(user.role) && (
         <div className="grid gap-6 lg:grid-cols-2">
@@ -457,7 +435,7 @@ export default function AdminDashboardPage() {
               </button>
             </form>
             <p className="mt-3 text-xs text-[color:color-mix(in_srgb,var(--ink)_45%,transparent)]">
-              Enter part of an email (e.g. <code className="rounded bg-[color:color-mix(in_srgb,var(--ink)_8%,transparent)] px-1">@acme</code>) — the API matches active users only.
+              Enter part of an email (e.g. <code className="rounded bg-[color:color-mix(in_srgb,var(--ink)_8%,transparent)] px-1">@acme</code>) - the API matches active users only.
             </p>
             <ul className="mt-4 max-h-64 space-y-1 overflow-y-auto text-sm">
               {custResults.map((u) => (
@@ -474,7 +452,7 @@ export default function AdminDashboardPage() {
                   >
                     <span className="block font-medium text-[color:var(--ink)]">{u.email}</span>
                     <span className="text-xs text-[color:color-mix(in_srgb,var(--ink)_50%,transparent)]">
-                      {u.name || "—"} · {u.role}
+                      {u.name || "-"} · {u.role}
                     </span>
                   </button>
                 </li>

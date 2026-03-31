@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import GlassSurface from "../components/GlassSurface.jsx";
+import AuthGlassSurface from "./AuthGlassSurface.jsx";
 import GoogleOAuthBorderButton from "../components/GoogleOAuthBorderButton.jsx";
 import AuthPageShell, { AUTH_FORM_GLASS_PROPS } from "./AuthPageShell.jsx";
 import AuthEmailDivider from "./AuthEmailDivider.jsx";
@@ -34,7 +34,7 @@ export default function SignInPage() {
 
   return (
     <AuthPageShell>
-      <GlassSurface
+      <AuthGlassSurface
         {...AUTH_FORM_GLASS_PROPS}
         borderRadius={24}
         width="100%"
@@ -129,7 +129,7 @@ export default function SignInPage() {
             </Link>
           </p>
         </form>
-      </GlassSurface>
+      </AuthGlassSurface>
     </AuthPageShell>
   );
 }

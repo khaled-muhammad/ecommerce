@@ -1,4 +1,4 @@
-/** Inline SVG defs for <use href="#…"> — safe-area + nav corner shapes. */
+/** Inline SVG defs for <use href="#…"> - safe-area + nav corner shapes. */
 
 export default function SiteShellSprite() {
   return (

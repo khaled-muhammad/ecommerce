@@ -17,7 +17,7 @@
   --r: 220px;
 }
 
-/* Full-width bridge — circular brand orbs on shell bg */
+/* Full-width bridge - circular brand orbs on shell bg */
 .chroma-grid.chroma-grid--brands {
   max-width: none;
   margin: 0;
@@ -78,7 +78,7 @@
   border-color: var(--card-border);
 }
 
-/* Brand orbs — perfect circles, hairline edge, quiet depth */
+/* Brand orbs - perfect circles, hairline edge, quiet depth */
 .chroma-card.chroma-card--brand {
   container-type: size;
   container-name: chroma-orb;

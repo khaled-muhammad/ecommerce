@@ -102,7 +102,7 @@ export default function CartPage() {
             <span className="font-bold tabular-nums text-[color:var(--ink)]">{formatUsd(subtotal)}</span>
           </div>
           <p className="mt-2 text-xs leading-relaxed text-[color:color-mix(in_srgb,var(--ink)_55%,transparent)]">
-            Shipping and taxes are calculated at checkout (demo — no real payment).
+            Shipping and taxes are calculated at checkout (demo - no real payment).
           </p>
           <Link
             to="/checkout"

@@ -8,7 +8,7 @@ import { mayAccessStaffCapability } from "../../lib/storeOwnerAccess.js";
 
 const router = Router();
 
-/** Delegated catalog admins (store owner always allowed — see mayAccessStaffCapability) */
+/** Delegated catalog admins (store owner always allowed - see mayAccessStaffCapability) */
 const CATALOG_ADMIN = new Set(["admin"]);
 
 function requireCatalogAdmin(req: Request, res: Response, next: NextFunction): void {

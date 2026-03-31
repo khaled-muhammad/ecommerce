@@ -1,4 +1,32 @@
-/* Footer content is rendered inside the landing-style laser card (LaserFooterRevealSection) */
+/* Footer: desktop shell uses laser card (LaserFooterRevealSection); mobile uses .site-footer-mobile-root (full width, no laser). */
+
+.site-footer-mobile-root {
+  width: 100%;
+  max-width: 100%;
+  background: var(--vexo-elevated);
+  border-top: 1px solid var(--vexo-divider);
+}
+
+.site-footer-mobile-root .site-footer {
+  margin-top: 0;
+  padding-top: 1.75rem;
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
+  padding-inline: 1rem;
+}
+
+.site-footer-mobile-root .site-footer__panel {
+  max-width: none;
+  margin-inline: 0;
+  min-height: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.site-footer-mobile-root .site-footer__inner {
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+}
 
 .site-footer {
   margin-top: auto;
@@ -43,8 +71,60 @@
 
 @media (min-width: 640px) {
   .site-footer__grid {
-    grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1.2fr) repeat(4, minmax(0, 1fr));
   }
+}
+
+.site-footer__social-wrap {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--vexo-divider);
+}
+
+.site-footer__social-label {
+  margin: 0 0 0.75rem;
+  font-family: var(--site-font, system-ui, sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vexo-text-muted);
+}
+
+.site-footer__social-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* react-social-icons: anchor gets className + inline size */
+.site-footer__social-icon {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 9999px;
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--vexo-text) 8%, transparent);
+}
+
+.site-footer__social-icon:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--vexo-text) 14%, transparent);
+}
+
+.site-footer__social-icon:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--vexo-text) 40%, transparent);
+  outline-offset: 2px;
+}
+
+.site-footer-mobile-root .site-footer__social-icon {
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--vexo-text) 10%, transparent);
 }
 
 .site-footer__brand {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Trash2 } from "lucide-react";
 import { useAuth } from "../auth/useAuth.js";
@@ -31,7 +31,7 @@ function SectionTitle({ children }) {
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { user, loading, authorizedFetch, updateUser, logout } = useAuth();
+  const { user, authorizedFetch, updateUser, logout } = useAuth();
   const [tab, setTab] = useState("account");
   const [addresses, setAddresses] = useState([]);
   const [payments, setPayments] = useState([]);
@@ -251,18 +251,6 @@ export default function ProfilePage() {
     } finally {
       setDeleting(false);
     }
-  }
-
-  if (!loading && !user) {
-    return <Navigate to="/sign-in" replace state={{ from: { pathname: "/profile" } }} />;
-  }
-
-  if (loading || !user) {
-    return (
-      <div className={`mx-auto max-w-3xl px-4 pb-20 ${pageTop} md:px-6`}>
-        <p className="font-ui text-sm text-[color:color-mix(in_srgb,var(--ink)_55%,transparent)]">Loading…</p>
-      </div>
-    );
   }
 
   const tabBtnBase =

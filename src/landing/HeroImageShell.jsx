@@ -1,9 +1,5 @@
 import { useLayoutEffect, useRef } from "react";
 
-/**
- * HomePage GSAP fades `.hero-image`; clear any stray inline transform/opacity on mount
- * so the canvas measures a neutral box (e.g. after fast navigation remounts).
- */
 export default function HeroImageShell({ children }) {
   const rootRef = useRef(null);
 

@@ -101,7 +101,6 @@ export default function LevelUpSection() {
           className="levelup-stack flex items-center justify-center min-[900px]:[perspective:1400px]"
           style={{ transformStyle: "preserve-3d" }}
         >
-          {/* Left — sits behind, pulled into center so edges meet */}
           <div className="levelup-card-side pointer-events-none relative z-0 hidden min-[900px]:block min-[900px]:-mr-[clamp(4.25rem,12vw,7.5rem)] min-[900px]:w-[min(34vw,340px)] min-[900px]:shrink-0">
             <div className="will-change-transform" style={sideLeftStyle}>
               <div className="relative aspect-[3/4] w-full overflow-hidden rounded-3xl shadow-xl [box-shadow:0_22px_44px_-14px_rgb(0_0_0/0.48)]">

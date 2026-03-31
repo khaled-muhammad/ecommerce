@@ -4,7 +4,7 @@ import { useCart } from "../cart/useCart.js";
 
 export default function CheckoutCompletePage() {
   const [params] = useSearchParams();
-  const orderId = params.get("order") || "—";
+  const orderId = params.get("order") || "-";
   const { clearCart } = useCart();
   const orderParam = params.get("order");
 

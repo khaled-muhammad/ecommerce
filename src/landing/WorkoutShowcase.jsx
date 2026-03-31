@@ -54,8 +54,8 @@ export default function WorkoutShowcase() {
   }));
 
   return (
-    <section ref={sectionRef} className="section-bg relative overflow-hidden py-20 lg:py-32">
-      <div className="pointer-events-none absolute left-0 top-1/2 w-[200%] -translate-y-1/2 select-none">
+    <section ref={sectionRef} className="section-bg section-padding relative overflow-hidden">
+      <div className="pointer-events-none absolute left-0 top-1/2 w-[280%] -translate-y-1/2 select-none lg:w-[200%]">
         <div ref={watermarkRef}>
           <span className="watermark-text font-black italic">hardware</span>
         </div>
@@ -69,20 +69,20 @@ export default function WorkoutShowcase() {
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 lg:col-span-8 lg:gap-6">
+          <div className="grid grid-cols-3 gap-3 lg:col-span-8 lg:gap-6">
             <div className="workout-image col-span-1">
               <div className="relative aspect-[3/4] overflow-hidden rounded-2xl shadow-lg img-zoom">
                 <img src={workoutImages[0].src} alt={workoutImages[0].alt} className="h-full w-full object-cover" />
               </div>
             </div>
 
-            <div className="workout-image col-span-1 -mt-8">
+            <div className="workout-image col-span-1 -mt-4 lg:-mt-8">
               <div className="relative aspect-[3/4] overflow-hidden rounded-2xl shadow-xl img-zoom">
                 <img src={workoutImages[1].src} alt={workoutImages[1].alt} className="h-full w-full object-cover" />
               </div>
             </div>
 
-            <div className="workout-image col-span-1 mt-8">
+            <div className="workout-image col-span-1 mt-4 lg:mt-8">
               <div className="relative aspect-[3/4] overflow-hidden rounded-2xl shadow-lg img-zoom">
                 <img src={workoutImages[2].src} alt={workoutImages[2].alt} className="h-full w-full object-cover" />
               </div>

@@ -1,7 +1,4 @@
-/**
- * Partner brands for /brands ChromaGrid.
- * Logos: Simple Icons CDN (https://simpleicons.org/) — brand marks only; names shown in UI.
- */
+/** /brands grid; logos via Simple Icons CDN. */
 export const BRAND_GRID_ITEMS = [
   {
     image: "https://cdn.simpleicons.org/nvidia/76B900",
