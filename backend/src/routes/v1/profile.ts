@@ -35,7 +35,7 @@ const addressSchema = z.object({
   line2: z.string().max(300).optional(),
   city: z.string().min(1).max(120),
   postal: z.string().min(1).max(32),
-  country: z.string().min(1).max(80).default("US"),
+  country: z.string().min(1).max(80).default("EG"),
   phone: z.string().max(40).optional(),
   isDefault: z.boolean().optional().default(false),
 });

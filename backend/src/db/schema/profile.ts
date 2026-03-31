@@ -15,7 +15,7 @@ export const userAddresses = pgTable(
     line2: text("line_2"),
     city: text("city").notNull(),
     postal: text("postal").notNull(),
-    country: text("country").notNull().default("US"),
+    country: text("country").notNull().default("EG"),
     phone: text("phone"),
     isDefault: boolean("is_default").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

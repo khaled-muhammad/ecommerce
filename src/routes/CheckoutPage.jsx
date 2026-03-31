@@ -5,6 +5,8 @@ import { useCart } from "../cart/useCart.js";
 import { useCartLines, useCartSubtotalCents } from "../cart/cart-selectors.js";
 import { useAuth } from "../auth/useAuth.js";
 import { useSiteConfig } from "../context/useSiteConfig.js";
+import CountrySelect from "../components/CountrySelect.jsx";
+import { DEFAULT_COUNTRY_CODE } from "../lib/countries.js";
 
 async function parseJson(res) {
   const text = await res.text();
@@ -42,7 +44,7 @@ export default function CheckoutPage() {
   const [address2, setAddress2] = useState("");
   const [city, setCity] = useState("");
   const [postal, setPostal] = useState("");
-  const [country, setCountry] = useState("US");
+  const [country, setCountry] = useState(DEFAULT_COUNTRY_CODE);
   const [couponCode, setCouponCode] = useState("");
 
   const [addresses, setAddresses] = useState([]);
@@ -360,13 +362,10 @@ export default function CheckoutPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-[color:color-mix(in_srgb,var(--ink)_55%,transparent)]">
                 Country <span className="text-red-600">*</span>
               </span>
-              <input
-                type="text"
-                autoComplete="country"
+              <CountrySelect
                 value={country}
-                onChange={(e) => setCountry(e.target.value)}
+                onChange={setCountry}
                 required
-                placeholder="e.g. US"
                 className="mt-2 w-full rounded-xl border border-[color:color-mix(in_srgb,var(--ink)_18%,transparent)] bg-[color:color-mix(in_srgb,var(--ink)_4%,transparent)] px-4 py-3 text-sm text-[color:var(--ink)]"
               />
             </label>

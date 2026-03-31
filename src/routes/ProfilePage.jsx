@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Trash2 } from "lucide-react";
 import { useAuth } from "../auth/useAuth.js";
+import CountrySelect from "../components/CountrySelect.jsx";
+import { DEFAULT_COUNTRY_CODE, formatCountryLabel } from "../lib/countries.js";
 
 const pageTop = "pt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5.25rem))]";
 
@@ -51,7 +53,7 @@ export default function ProfilePage() {
     line2: "",
     city: "",
     postal: "",
-    country: "US",
+    country: DEFAULT_COUNTRY_CODE,
     phone: "",
     isDefault: false,
   });
@@ -159,7 +161,7 @@ export default function ProfilePage() {
         line2: "",
         city: "",
         postal: "",
-        country: "US",
+        country: DEFAULT_COUNTRY_CODE,
         phone: "",
         isDefault: false,
       });
@@ -363,7 +365,7 @@ export default function ProfilePage() {
                           {a.line1}
                           {a.line2 ? `, ${a.line2}` : ""}
                           <br />
-                          {a.city}, {a.postal} · {a.country}
+                          {a.city}, {a.postal} · {formatCountryLabel(a.country)}
                           {a.phone ? (
                             <>
                               <br />
@@ -411,7 +413,12 @@ export default function ProfilePage() {
                 </label>
                 <label className="font-ui text-xs font-semibold uppercase tracking-wider text-[color:color-mix(in_srgb,var(--ink)_50%,transparent)]">
                   Country
-                  <input className={`${field} mt-1.5`} value={addrForm.country} onChange={(e) => setAddrForm((f) => ({ ...f, country: e.target.value }))} required />
+                  <CountrySelect
+                    className={`${field} mt-1.5`}
+                    value={addrForm.country}
+                    onChange={(code) => setAddrForm((f) => ({ ...f, country: code }))}
+                    required
+                  />
                 </label>
                 <label className="font-ui text-xs font-semibold uppercase tracking-wider text-[color:color-mix(in_srgb,var(--ink)_50%,transparent)]">
                   Phone
