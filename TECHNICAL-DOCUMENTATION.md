@@ -1,8 +1,8 @@
 # Roxy Ecommerce: Technical Documentation
-
+By/ Khaled Muhammad
 ## Description
 
-Roxy is a full stack demo ecommerce storefront for PC parts and builds. The **frontend** is a React single page application (Vite, Tailwind CSS v4) with a custom site shell, shop flows, cart, checkout (Stripe), authentication (email/password and Google OAuth), and a staff admin area for catalog and orders. The **backend** is a Node.js Express API with PostgreSQL, Drizzle ORM, JWT sessions with refresh cookies, and optional S3 or local disk for admin image uploads.
+Roxy is a full stack ecommerce storefront for PC parts and builds. The **frontend** is a React single page application (Vite, Tailwind CSS v4) with a custom site shell, shop flows, cart, checkout (Stripe), authentication (email/password and Google OAuth), and a staff admin area for catalog and orders. The **backend** is a Node.js Express API with PostgreSQL, Drizzle ORM, JWT sessions with refresh cookies, and optional S3 or local disk for admin image uploads.
 
 The project is structured as a monorepo-style layout: application code lives at the repository root (`src/`, `public/`) and the API in `backend/`.
 
@@ -199,14 +199,22 @@ ecommerce/
 
 ## Reflection
 
-This codebase balances a **polished marketing surface** (landing animations, glass UI, theme-aware shell) with **practical ecommerce mechanics** (real cart, checkout, staff tools). Keeping the API under `/api/v1` and proxying from Vite avoids CORS friction in local development while still allowing explicit CORS configuration for deployed origins.
+Building Roxy taught me how much of a real ecommerce app lives outside the "happy path" UI. I wanted a strong landing (motion, 3D, glass-style shell) sitting on top of an actual API, cart, and checkout. That split was rewarding, but most of what stuck with me was wiring and edge cases, not the visuals alone.
 
-**Strengths:** Clear split between public catalog routes and staff-only admin routes; Drizzle schema keeps types close to SQL; shared auth shell and tokens reduce duplicate UI for account flows.
+**What I learned**
 
-**Tradeoffs:** The frontend bundle includes heavy visuals (Three.js, GSAP); consider lazy routes for admin-only chunks if load time becomes an issue. Staff permissions are enforced on the server; the UI should stay aligned with role checks whenever new endpoints are added.
+- **Payments:** Stripe is not “call the API and you are done.” Webhook signing, a dedicated raw-body route (before Express JSON middleware), and a public HTTPS URL in production matter. Until `checkout.session.completed` runs, orders can sit in `pending`, which changed how I think about "paid" in the database versus what the user sees after redirect.
 
-**Operational note:** Production deployments must inject secrets via the host environment. Stripe webhooks require a public HTTPS URL and the raw body route order in `app.ts` must stay before the global JSON parser.
+- **Auth and the SPA:** Getting JWT refresh cookies and `authorizedFetch` right meant dealing with CORS and cookie rules that differ between Vite's dev proxy and a deployed split origin. Proxying `/api` locally simplified day-to-day work; production still needs explicit allowed origins and correct `FRONTEND_URL` / cookie settings.
 
----
+- **UX race conditions:** Clearing the cart after checkout while still on `/checkout` collided with an effect that sent empty carts back to `/cart`. I learned to treat navigation and global state updates as ordered steps (or guards) so success routes are not overridden.
 
-*Document version: aligned with repository layout at time of writing. Update paths or scripts if the project evolves.*
+- **Analytics and domains:** Dashboard "paid revenue" only makes sense if the query matches the real order workflow. I hit that when orders moved from `paid` into `processing` / `shipped` and dropped out of a naive `status = 'paid'` filter. The metric has to follow the business definition, not just the literal enum value at creation.
+
+- **Performance:** The landing's Three.js and GSAP stack is great for polish but costs bundle size and parse time. I would consider lazy-loading admin routes or heavy sections earlier if I were optimizing for first load.
+
+- **Permissions:** Every new staff endpoint needs server-side checks. The admin tabs are only hints; if the API allows it, the UI must match, and vice versa. I will default to implementing the server rule first, then exposing it in the dashboard.
+
+**Operations:** Production secrets belong in the environment, not only in `.env` on a laptop. Stripe in particular depends on webhook delivery and route ordering in `app.ts` staying correct after any refactor.
+
+Overall I got comfortable with a versioned API (`/api/v1`), Drizzle keeping schema and types honest, and the gap between a demo that looks finished and one that behaves finished under redirects, webhooks, and role boundaries.
