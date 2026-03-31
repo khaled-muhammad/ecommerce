@@ -1,6 +1,6 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { z } from "zod";
-import { eq, sql, desc, gte, and } from "drizzle-orm";
+import { eq, sql, desc, gte, and, inArray } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { orders, orderLines, analyticsEvents } from "../../db/schema/order.js";
 import { requireAuth } from "../../middleware/auth.js";
@@ -9,6 +9,9 @@ import { mayAccessStaffCapability } from "../../lib/storeOwnerAccess.js";
 const router = Router();
 
 const ANALYTICS_ROLES = new Set(["admin", "manager", "analyst"]);
+
+/** Payment captured; order may have moved on to fulfillment (processing/shipped/delivered). */
+const PAID_REVENUE_STATUSES = ["paid", "processing", "shipped", "delivered"] as const;
 
 function requireAnalytics(req: Request, res: Response, next: NextFunction): void {
   if (!req.user || !mayAccessStaffCapability(req.user.role, ANALYTICS_ROLES)) {
@@ -48,7 +51,7 @@ router.get("/summary", requireAuth, requireAnalytics, async (_req, res, next) =>
         revenueCents: sql<number>`coalesce(sum(${orders.totalCents}), 0)::int`,
       })
       .from(orders)
-      .where(and(eq(orders.status, "paid"), gte(orders.createdAt, since)));
+      .where(and(inArray(orders.status, [...PAID_REVENUE_STATUSES]), gte(orders.createdAt, since)));
 
     const topLines = await db
       .select({
@@ -59,7 +62,7 @@ router.get("/summary", requireAuth, requireAnalytics, async (_req, res, next) =>
       })
       .from(orderLines)
       .innerJoin(orders, eq(orderLines.orderId, orders.id))
-      .where(and(eq(orders.status, "paid"), gte(orders.createdAt, since)))
+      .where(and(inArray(orders.status, [...PAID_REVENUE_STATUSES]), gte(orders.createdAt, since)))
       .groupBy(orderLines.productId, orderLines.productName)
       .orderBy(desc(sql<number>`sum(${orderLines.lineTotalCents})`))
       .limit(10);

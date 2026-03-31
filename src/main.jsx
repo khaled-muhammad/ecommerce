@@ -23,7 +23,7 @@ window.addEventListener("unhandledrejection", (e) => {
   }
 });
 
-import { Route, BrowserRouter, Routes } from "react-router-dom";
+import { Outlet, Route, BrowserRouter, Routes } from "react-router-dom";
 import HomePage from "./routes/HomePage.jsx";
 import BrandsPage from "./routes/BrandsPage.jsx";
 import SignInPage from "./routes/SignInPage.jsx";
@@ -109,10 +109,13 @@ createRoot(document.getElementById("root")).render(
                   path="admin"
                   element={
                     <RequireStaffDashboard>
-                      <AdminDashboardPage />
+                      <Outlet />
                     </RequireStaffDashboard>
                   }
-                />
+                >
+                  <Route index element={<AdminDashboardPage />} />
+                  <Route path=":tab" element={<AdminDashboardPage />} />
+                </Route>
                 <Route
                   path="profile"
                   element={

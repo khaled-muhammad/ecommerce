@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../auth/useAuth.js";
 import { formatUsd } from "../lib/money.js";
@@ -69,14 +69,22 @@ function formatDate(iso) {
 }
 
 export default function AdminDashboardPage() {
+  const { tab: tabParam } = useParams();
+  const navigate = useNavigate();
   const { user, authorizedFetch } = useAuth();
   const tabs = useMemo(() => (user?.role ? getAdminTabsForRole(user.role) : []), [user?.role]);
-  const [tabSelected, setTabSelected] = useState(null);
+
   const activeTab = useMemo(() => {
     if (!tabs.length) return null;
-    if (tabSelected && tabs.some((t) => t.id === tabSelected)) return tabSelected;
+    if (tabParam && tabs.some((t) => t.id === tabParam)) return tabParam;
     return tabs[0].id;
-  }, [tabSelected, tabs]);
+  }, [tabs, tabParam]);
+
+  useEffect(() => {
+    if (!tabs.length || !activeTab) return;
+    const urlOk = tabParam && tabs.some((t) => t.id === tabParam);
+    if (!urlOk) navigate(`/admin/${activeTab}`, { replace: true });
+  }, [tabs, tabParam, activeTab, navigate]);
 
   const [catalogRoles, setCatalogRoles] = useState([]);
   const [inviteEmail, setInviteEmail] = useState("");
@@ -321,19 +329,20 @@ export default function AdminDashboardPage() {
 
       <div className="mb-6 flex flex-wrap gap-2 border-b border-[color:color-mix(in_srgb,var(--ink)_12%,transparent)] pb-3">
         {tabs.map((t) => (
-          <button
+          <NavLink
             key={t.id}
-            type="button"
-            className={[
-              "rounded-full px-4 py-2 text-sm font-medium transition-colors",
-              activeTab === t.id
-                ? "bg-[color:var(--ink)] text-[color:var(--paper)]"
-                : "text-[color:color-mix(in_srgb,var(--ink)_70%,transparent)] hover:bg-[color:color-mix(in_srgb,var(--ink)_8%,transparent)]",
-            ].join(" ")}
-            onClick={() => setTabSelected(t.id)}
+            to={`/admin/${t.id}`}
+            className={({ isActive }) =>
+              [
+                "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                isActive
+                  ? "bg-[color:var(--ink)] text-[color:var(--paper)]"
+                  : "text-[color:color-mix(in_srgb,var(--ink)_70%,transparent)] hover:bg-[color:color-mix(in_srgb,var(--ink)_8%,transparent)]",
+              ].join(" ")
+            }
           >
             {t.label}
-          </button>
+          </NavLink>
         ))}
       </div>
 
