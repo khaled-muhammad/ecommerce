@@ -20,6 +20,8 @@ export const orders = pgTable(
     taxCents: integer("tax_cents").notNull().default(0),
     totalCents: integer("total_cents").notNull(),
     stripePaymentIntentId: text("stripe_payment_intent_id"),
+    /** "stripe" | "cod" | null (legacy) */
+    paymentMethod: text("payment_method"),
     couponId: uuid("coupon_id"),
     notes: text("notes"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

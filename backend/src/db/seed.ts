@@ -166,7 +166,7 @@ async function seed() {
   console.log("  Store settings...");
   const [settingsRow] = await db.select().from(storeSettings).where(eq(storeSettings.id, 1)).limit(1);
   if (!settingsRow) {
-    await db.insert(storeSettings).values({ id: 1, social: {} });
+    await db.insert(storeSettings).values({ id: 1, social: {}, codEnabled: true });
   }
 
   console.log("Seed complete.");

@@ -6,6 +6,7 @@ import { eq, and, sql } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { cartItems, products } from "../../db/schema/catalog.js";
 import { orders, orderLines } from "../../db/schema/order.js";
+import { storeSettings } from "../../db/schema/site.js";
 import { requireAuth } from "../../middleware/auth.js";
 import { env } from "../../config/env.js";
 import { logger } from "../../config/logger.js";
@@ -46,6 +47,31 @@ function generateOrderNumber(): string {
   return `RX-${t}-${r}`;
 }
 
+async function getCodEnabledFromStore(): Promise<boolean> {
+  const [row] = await db
+    .select({ codEnabled: storeSettings.codEnabled })
+    .from(storeSettings)
+    .where(eq(storeSettings.id, 1))
+    .limit(1);
+  if (!row) return true;
+  return row.codEnabled;
+}
+
+/** Decrement stock and clear buyer cart (same as Stripe webhook after payment). */
+async function finalizeInventoryAfterOrderPaid(orderId: string): Promise<void> {
+  const lines = await db.select().from(orderLines).where(eq(orderLines.orderId, orderId));
+  for (const line of lines) {
+    await db
+      .update(products)
+      .set({ stock: sql`${products.stock} - ${line.quantity}`, updatedAt: new Date() })
+      .where(eq(products.id, line.productId));
+  }
+  const [orderRow] = await db.select({ userId: orders.userId }).from(orders).where(eq(orders.id, orderId)).limit(1);
+  if (orderRow?.userId) {
+    await db.delete(cartItems).where(eq(cartItems.userId, orderRow.userId));
+  }
+}
+
 // ── Create checkout ──
 
 const checkoutSchema = z.object({
@@ -57,6 +83,7 @@ const checkoutSchema = z.object({
   postal: z.string().min(1),
   country: z.string().min(1),
   couponCode: z.string().optional(),
+  paymentMethod: z.enum(["stripe", "cod"]).default("stripe"),
 });
 
 router.post("/", requireAuth, async (req, res, next) => {
@@ -67,6 +94,29 @@ router.post("/", requireAuth, async (req, res, next) => {
     }
 
     const body = checkoutSchema.parse(req.body);
+
+    const stripeOn = Boolean(env.STRIPE_SECRET_KEY?.trim());
+    const codAllowed = await getCodEnabledFromStore();
+
+    if (body.paymentMethod === "cod") {
+      if (!codAllowed) {
+        res.status(400).json({ error: "COD_DISABLED", message: "Cash on delivery is not available" });
+        return;
+      }
+    } else if (!stripeOn) {
+      if (codAllowed) {
+        res.status(400).json({
+          error: "STRIPE_REQUIRED",
+          message: "Card payment is not configured. Choose cash on delivery or try again later.",
+        });
+        return;
+      }
+      res.status(503).json({
+        error: "PAYMENTS_DISABLED",
+        message: "No payment methods are enabled. Contact the store.",
+      });
+      return;
+    }
 
     // Fetch cart
     const items = await db.select()
@@ -101,6 +151,9 @@ router.post("/", requireAuth, async (req, res, next) => {
 
     // Create order
     const orderNumber = generateOrderNumber();
+    const initialStatus = body.paymentMethod === "cod" ? "paid" : "pending";
+    const paymentMethod = body.paymentMethod === "cod" ? "cod" : "stripe";
+
     const [order] = await db.insert(orders).values({
       orderNumber,
       userId: req.user.id,
@@ -115,7 +168,8 @@ router.post("/", requireAuth, async (req, res, next) => {
       shippingCents,
       taxCents,
       totalCents,
-      status: "pending",
+      status: initialStatus,
+      paymentMethod,
     }).returning();
 
     // Create order lines (snapshot product data)
@@ -129,6 +183,20 @@ router.post("/", requireAuth, async (req, res, next) => {
         quantity: item.cart_items.quantity,
         lineTotalCents: item.products.priceCents * item.cart_items.quantity,
       });
+    }
+
+    if (body.paymentMethod === "cod") {
+      await finalizeInventoryAfterOrderPaid(order.id);
+      res.json({
+        order: {
+          id: order.id,
+          orderNumber: order.orderNumber,
+          totalCents: order.totalCents,
+        },
+        paymentMethod: "cod",
+        checkoutUrl: null,
+      });
+      return;
     }
 
     // Create Stripe checkout session
@@ -163,6 +231,7 @@ router.post("/", requireAuth, async (req, res, next) => {
         orderNumber: order.orderNumber,
         totalCents: order.totalCents,
       },
+      paymentMethod: "stripe",
       checkoutUrl: stripeSession.url,
     });
   } catch (err) {
@@ -212,27 +281,18 @@ export async function handleStripeWebhook(req: Request, res: Response, next: Nex
           break;
         }
 
-        await db.update(orders)
+        await db
+          .update(orders)
           .set({
             status: "paid",
-            stripePaymentIntentId: typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null,
+            paymentMethod: "stripe",
+            stripePaymentIntentId:
+              typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null,
             updatedAt: new Date(),
           })
           .where(eq(orders.id, orderId));
 
-        // Decrement stock
-        const lines = await db.select().from(orderLines).where(eq(orderLines.orderId, orderId));
-        for (const line of lines) {
-          await db.update(products)
-            .set({ stock: sql`${products.stock} - ${line.quantity}`, updatedAt: new Date() })
-            .where(eq(products.id, line.productId));
-        }
-
-        // Clear user's cart
-        const [orderRow] = await db.select({ userId: orders.userId }).from(orders).where(eq(orders.id, orderId)).limit(1);
-        if (orderRow?.userId) {
-          await db.delete(cartItems).where(eq(cartItems.userId, orderRow.userId));
-        }
+        await finalizeInventoryAfterOrderPaid(orderId);
 
         logger.info({ orderId, orderNumber, event: event.type }, "Order paid");
         break;

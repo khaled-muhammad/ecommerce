@@ -430,6 +430,24 @@ export default function AdminOrdersPanel({ authorizedFetch, role }) {
 
                   <div className="flex items-start gap-3 border-t border-[color:color-mix(in_srgb,var(--ink)_6%,transparent)] pt-4">
                     <div className="mt-0.5 rounded-md bg-[color:color-mix(in_srgb,var(--ink)_4%,transparent)] p-1.5">
+                      <CreditCard className="h-3.5 w-3.5 text-[color:color-mix(in_srgb,var(--ink)_60%,transparent)]" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:color-mix(in_srgb,var(--ink)_40%,transparent)]">Payment</p>
+                      <p className="text-sm font-medium text-[color:var(--ink)]">
+                        {detail.order.paymentMethod === "cod"
+                          ? "Cash on delivery"
+                          : detail.order.paymentMethod === "stripe"
+                            ? "Card (Stripe)"
+                            : detail.order.stripePaymentIntentId
+                              ? "Card (Stripe)"
+                              : "Not recorded"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 border-t border-[color:color-mix(in_srgb,var(--ink)_6%,transparent)] pt-4">
+                    <div className="mt-0.5 rounded-md bg-[color:color-mix(in_srgb,var(--ink)_4%,transparent)] p-1.5">
                       <MapPin className="h-3.5 w-3.5 text-[color:color-mix(in_srgb,var(--ink)_60%,transparent)]" />
                     </div>
                     <div>
@@ -531,6 +549,21 @@ export default function AdminOrdersPanel({ authorizedFetch, role }) {
                   )}
                 </div>
               </div>
+
+              {detail.order.paymentMethod === "cod" && (
+                <div className={`${cardStyle} flex items-start gap-4 border-sky-200 bg-sky-50 md:col-span-2 dark:border-sky-900/30 dark:bg-sky-950/10`}>
+                  <div className="rounded-full bg-sky-100 p-2 dark:bg-sky-900/30">
+                    <Truck className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-sky-900 dark:text-sky-200">Cash on delivery</h4>
+                    <p className="mt-1 text-xs leading-relaxed text-sky-800/90 dark:text-sky-300/90">
+                      Collect payment when the order is delivered. Stripe refund does not apply; cancel or adjust the order if
+                      the customer does not pay.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Payment Info / Alert Card */}
               {canRefund && detail.refundEligible && (

@@ -1,4 +1,4 @@
-import { pgTable, integer, jsonb, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgTable, integer, jsonb, text, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 /** Singleton row id = 1 */
@@ -8,6 +8,7 @@ export const storeSettings = pgTable("store_settings", {
     .$type<Record<string, string | undefined>>()
     .notNull()
     .default(sql`'{}'::jsonb`),
+  codEnabled: boolean("cod_enabled").notNull().default(true),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

@@ -4,6 +4,7 @@ import { formatUsd } from "../lib/money.js";
 import { useCart } from "../cart/useCart.js";
 import { useCartLines, useCartSubtotalCents } from "../cart/cart-selectors.js";
 import { useAuth } from "../auth/useAuth.js";
+import { useSiteConfig } from "../context/useSiteConfig.js";
 
 async function parseJson(res) {
   const text = await res.text();
@@ -30,7 +31,8 @@ function isAddressRow(v) {
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const { user, authorizedFetch } = useAuth();
-  const { items } = useCart();
+  const { codEnabled, stripePaymentsEnabled, loaded: configLoaded } = useSiteConfig();
+  const { items, clearCart } = useCart();
   const lines = useCartLines();
   const subtotal = useCartSubtotalCents();
 
@@ -49,6 +51,24 @@ export default function CheckoutPage() {
 
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(/** @type {"stripe" | "cod"} */ ("stripe"));
+
+  useEffect(() => {
+    if (!configLoaded) return;
+    if (codEnabled && !stripePaymentsEnabled) setPaymentMethod("cod");
+    else setPaymentMethod("stripe");
+  }, [configLoaded, codEnabled, stripePaymentsEnabled]);
+
+  const checkoutIntro = useMemo(() => {
+    if (!configLoaded) return "Loading checkout options…";
+    if (codEnabled && stripePaymentsEnabled) {
+      return "Choose how you pay. Pay securely with a card (Stripe) or choose cash on delivery and pay when your order arrives.";
+    }
+    if (codEnabled) return "You will pay when your order is delivered (cash on delivery). Shipping and tax are included in your order total.";
+    return "You will go to Stripe to pay securely. Shipping and tax are included in the total on the payment page.";
+  }, [configLoaded, codEnabled, stripePaymentsEnabled]);
+
+  const paymentsAvailable = configLoaded && (stripePaymentsEnabled || codEnabled);
 
   const applyAddress = useCallback((addr) => {
     if (!addr || typeof addr !== "object") return;
@@ -144,6 +164,7 @@ export default function CheckoutPage() {
       if (a2) body.address2 = a2;
       const cc = couponCode.trim();
       if (cc) body.couponCode = cc;
+      body.paymentMethod = paymentMethod;
 
       const res = await authorizedFetch("/api/v1/checkout", {
         method: "POST",
@@ -153,8 +174,20 @@ export default function CheckoutPage() {
 
       if (res.status === 502 && data?.error === "PAYMENT_ERROR") {
         setError(
-          "Payments are not available right now (Stripe is not configured or the session could not be created). Try again later or contact support.",
+          "Card payment is not available right now (Stripe is not configured or the session could not be created). Try cash on delivery if it is offered, or try again later.",
         );
+        return;
+      }
+      if (res.status === 503 && data?.error === "PAYMENTS_DISABLED") {
+        setError(typeof data?.message === "string" ? data.message : "No payment methods are enabled for this store.");
+        return;
+      }
+      if (res.status === 400 && data?.error === "STRIPE_REQUIRED") {
+        setError(typeof data?.message === "string" ? data.message : "Choose cash on delivery or contact support.");
+        return;
+      }
+      if (res.status === 400 && data?.error === "COD_DISABLED") {
+        setError(typeof data?.message === "string" ? data.message : "Cash on delivery is not available.");
         return;
       }
       if (res.status === 422 && data?.error === "EMPTY_CART") {
@@ -170,9 +203,14 @@ export default function CheckoutPage() {
         setError(typeof data?.message === "string" ? data.message : "Checkout failed. Please try again.");
         return;
       }
+      if (data?.paymentMethod === "cod" && data?.order?.orderNumber) {
+        clearCart();
+        navigate(`/checkout/complete?order=${encodeURIComponent(data.order.orderNumber)}`, { replace: true });
+        return;
+      }
       const url = data?.checkoutUrl;
       if (typeof url !== "string" || !url) {
-        setError("No checkout URL returned. Payment may be misconfigured.");
+        setError("No checkout URL returned. Try another payment method or contact support.");
         return;
       }
       window.location.href = url;
@@ -191,8 +229,13 @@ export default function CheckoutPage() {
     <div className="mx-auto w-full max-w-[min(100%,1040px)] px-4 pb-20 pt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5.25rem))] md:px-6 lg:px-8">
       <h1 className="font-ui-medium text-3xl tracking-[-0.03em] text-[color:var(--ink)] md:text-4xl">Checkout</h1>
       <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-[color:color-mix(in_srgb,var(--ink)_72%,transparent)]">
-        You will be redirected to Stripe to pay securely. Shipping and tax are included in the total shown on the payment page.
+        {checkoutIntro}
       </p>
+      {configLoaded && !paymentsAvailable ? (
+        <p className="mt-4 max-w-2xl rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200">
+          Checkout is unavailable: neither Stripe nor cash on delivery is enabled. Please contact the store.
+        </p>
+      ) : null}
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_340px] lg:items-start">
         <form onSubmit={(e) => void handleSubmit(e)} className="flex flex-col gap-6" noValidate>
@@ -339,9 +382,50 @@ export default function CheckoutPage() {
 
           <fieldset className="rounded-2xl border border-dashed border-[color:color-mix(in_srgb,var(--ink)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--ink)_3%,transparent)] p-6">
             <legend className="font-ui-medium px-1 text-lg text-[color:var(--ink)]">Payment</legend>
-            <p className="mt-2 text-sm leading-relaxed text-[color:color-mix(in_srgb,var(--ink)_68%,transparent)]">
-              Card details are entered on Stripe’s secure page after you continue. This site does not store your card number.
-            </p>
+            {!configLoaded ? (
+              <p className="mt-2 text-sm text-[color:color-mix(in_srgb,var(--ink)_55%,transparent)]">Loading payment options…</p>
+            ) : codEnabled && stripePaymentsEnabled ? (
+              <div className="mt-3 flex flex-col gap-3">
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[color:color-mix(in_srgb,var(--ink)_14%,transparent)] bg-[color:color-mix(in_srgb,var(--ink)_4%,transparent)] p-4">
+                  <input
+                    type="radio"
+                    name="payment"
+                    className="mt-1"
+                    checked={paymentMethod === "stripe"}
+                    onChange={() => setPaymentMethod("stripe")}
+                  />
+                  <span>
+                    <span className="font-medium text-[color:var(--ink)]">Pay with card</span>
+                    <span className="mt-1 block text-sm text-[color:color-mix(in_srgb,var(--ink)_65%,transparent)]">
+                      You will complete payment on Stripe. This site does not store your card number.
+                    </span>
+                  </span>
+                </label>
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[color:color-mix(in_srgb,var(--ink)_14%,transparent)] bg-[color:color-mix(in_srgb,var(--ink)_4%,transparent)] p-4">
+                  <input
+                    type="radio"
+                    name="payment"
+                    className="mt-1"
+                    checked={paymentMethod === "cod"}
+                    onChange={() => setPaymentMethod("cod")}
+                  />
+                  <span>
+                    <span className="font-medium text-[color:var(--ink)]">Cash on delivery</span>
+                    <span className="mt-1 block text-sm text-[color:color-mix(in_srgb,var(--ink)_65%,transparent)]">
+                      Pay when your order is delivered. Your order is confirmed right away and we will prepare it for shipment.
+                    </span>
+                  </span>
+                </label>
+              </div>
+            ) : codEnabled ? (
+              <p className="mt-2 text-sm leading-relaxed text-[color:color-mix(in_srgb,var(--ink)_68%,transparent)]">
+                Cash on delivery: pay when your order arrives. Your order is confirmed as soon as you place it.
+              </p>
+            ) : (
+              <p className="mt-2 text-sm leading-relaxed text-[color:color-mix(in_srgb,var(--ink)_68%,transparent)]">
+                Card details are entered on Stripe after you continue. This site does not store your card number.
+              </p>
+            )}
           </fieldset>
 
           {error ? (
@@ -352,10 +436,14 @@ export default function CheckoutPage() {
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || !paymentsAvailable}
             className="rounded-xl bg-[color:var(--ink)] py-4 text-sm font-semibold text-[color:var(--paper)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitting ? "Starting checkout…" : "Continue to payment"}
+            {submitting
+              ? "Working…"
+              : paymentMethod === "cod"
+                ? "Place order"
+                : "Continue to payment"}
           </button>
         </form>
 

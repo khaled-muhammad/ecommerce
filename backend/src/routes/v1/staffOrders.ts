@@ -105,7 +105,9 @@ router.get("/orders/:orderRef", requireAuth, requireOrderView, async (req, res, 
     const lines = await db.select().from(orderLines).where(eq(orderLines.orderId, order.id));
     const from = order.status as OrderStatus;
     const nextStatuses = isOrderStatus(from) ? allowedNextStatuses(from) : [];
-    const refundEligible = ["paid", "processing", "shipped", "delivered"].includes(order.status);
+    const refundEligible =
+      ["paid", "processing", "shipped", "delivered"].includes(order.status) &&
+      Boolean(order.stripePaymentIntentId);
     res.json({ order, lines, allowedNextStatuses: nextStatuses, refundEligible });
   } catch (err) {
     next(err);

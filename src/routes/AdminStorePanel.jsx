@@ -47,17 +47,20 @@ export default function AdminStorePanel() {
   const { authorizedFetch } = useAuth();
   const { refresh: refreshSiteConfig } = useSiteConfig();
   const [social, setSocial] = useState({});
+  const [codEnabled, setCodEnabled] = useState(true);
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingCod, setSavingCod] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const cRes = await fetch(apiUrl("/api/v1/site/config"));
       const cData = await parseJson(cRes);
-      if (cRes.ok && cData?.social && typeof cData.social === "object") {
-        setSocial(cData.social);
+      if (cRes.ok) {
+        if (cData?.social && typeof cData.social === "object") setSocial(cData.social);
+        if (typeof cData?.codEnabled === "boolean") setCodEnabled(cData.codEnabled);
       }
     } catch {
       toast.error("Could not load public site config");
@@ -104,6 +107,27 @@ export default function AdminStorePanel() {
     }
   }
 
+  async function onSaveCod(e) {
+    e.preventDefault();
+    if (savingCod) return;
+    setSavingCod(true);
+    try {
+      const res = await authorizedFetch("/api/v1/site/config", {
+        method: "PATCH",
+        body: JSON.stringify({ codEnabled }),
+      });
+      const data = await parseJson(res);
+      if (!res.ok) throw new Error(data?.message ?? data?.error ?? "Save failed");
+      if (typeof data?.codEnabled === "boolean") setCodEnabled(data.codEnabled);
+      await refreshSiteConfig();
+      toast.success("Payment options updated");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Save failed");
+    } finally {
+      setSavingCod(false);
+    }
+  }
+
   if (loading) {
     return (
       <div className="font-ui text-sm text-[color:color-mix(in_srgb,var(--ink)_55%,transparent)]">Loading store settings…</div>
@@ -137,6 +161,33 @@ export default function AdminStorePanel() {
         </div>
         <button type="submit" className={`${btnPrimary} mt-6`} disabled={saving}>
           {saving ? "Saving…" : "Save social links"}
+        </button>
+      </form>
+
+      <form className={card} onSubmit={(e) => void onSaveCod(e)}>
+        <h3 className="mb-2 text-sm font-semibold text-[color:var(--ink)]">Checkout payments</h3>
+        <p className="mb-4 text-xs text-[color:color-mix(in_srgb,var(--ink)_52%,transparent)]">
+          When disabled, customers cannot choose cash on delivery at checkout. Card payments use Stripe and depend on{" "}
+          <code className="rounded bg-[color:color-mix(in_srgb,var(--ink)_8%,transparent)] px-1">STRIPE_SECRET_KEY</code> in
+          the server environment.
+        </p>
+        <label className="flex cursor-pointer items-start gap-3">
+          <input
+            type="checkbox"
+            className="mt-1 h-4 w-4 rounded border-[color:color-mix(in_srgb,var(--ink)_25%,transparent)]"
+            checked={codEnabled}
+            onChange={(e) => setCodEnabled(e.target.checked)}
+          />
+          <span className="text-sm text-[color:var(--ink)]">
+            <span className="font-medium">Allow cash on delivery (COD)</span>
+            <span className="mt-0.5 block text-xs text-[color:color-mix(in_srgb,var(--ink)_52%,transparent)]">
+              Customer pays when the order is delivered. Orders are confirmed immediately and follow your normal fulfillment
+              flow.
+            </span>
+          </span>
+        </label>
+        <button type="submit" className={`${btnPrimary} mt-5`} disabled={savingCod}>
+          {savingCod ? "Saving…" : "Save payment options"}
         </button>
       </form>
 

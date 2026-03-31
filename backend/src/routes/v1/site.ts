@@ -5,6 +5,7 @@ import { db } from "../../db/index.js";
 import { storeSettings, contactInquiries } from "../../db/schema/site.js";
 import { requireAuth } from "../../middleware/auth.js";
 import { mayAccessStaffCapability } from "../../lib/storeOwnerAccess.js";
+import { env } from "../../config/env.js";
 
 const router = Router();
 
@@ -31,6 +32,11 @@ const socialPatchSchema = z.object({
   linkedin: urlField.optional(),
 });
 
+const settingsPatchSchema = z.object({
+  ...socialPatchSchema.shape,
+  codEnabled: z.boolean().optional(),
+});
+
 const contactPostSchema = z.object({
   name: z.string().trim().min(1).max(120),
   email: z.string().trim().email().max(320),
@@ -45,18 +51,29 @@ function compactSocial(r: Record<string, string | undefined>): Record<string, st
   return o;
 }
 
-async function ensureSettingsRow(): Promise<Record<string, string>> {
-  const [row] = await db.select().from(storeSettings).where(eq(storeSettings.id, 1)).limit(1);
-  if (row) return compactSocial({ ...(row.social ?? {}) });
-  await db.insert(storeSettings).values({ id: 1, social: {} });
-  return {};
+function stripeConfigured(): boolean {
+  return Boolean(env.STRIPE_SECRET_KEY?.trim());
 }
 
-/** Public: social links for footer */
+async function getOrCreateStoreRow() {
+  const [row] = await db.select().from(storeSettings).where(eq(storeSettings.id, 1)).limit(1);
+  if (row) return row;
+  await db.insert(storeSettings).values({ id: 1, social: {} });
+  const [created] = await db.select().from(storeSettings).where(eq(storeSettings.id, 1)).limit(1);
+  return created!;
+}
+
+/** Public: social links, checkout flags */
 router.get("/config", async (_req, res, next) => {
   try {
-    const social = await ensureSettingsRow();
-    res.json({ social });
+    const row = await getOrCreateStoreRow();
+    const social = compactSocial({ ...(row.social ?? {}) });
+    const codEnabled = row.codEnabled;
+    res.json({
+      social,
+      codEnabled,
+      stripePaymentsEnabled: stripeConfigured(),
+    });
   } catch (err) {
     next(err);
   }
@@ -77,28 +94,32 @@ router.post("/contact", async (req, res, next) => {
   }
 });
 
-/** Staff: update social links (owner, admin, manager) */
+/** Staff: update store settings (social, COD toggle) */
 router.patch("/config", requireAuth, requireStoreSettings, async (req, res, next) => {
   try {
-    const patch = socialPatchSchema.parse(req.body);
-    const current = await ensureSettingsRow();
-    const merged: Record<string, string | undefined> = { ...current };
-    for (const [k, v] of Object.entries(patch) as [string, string | undefined][]) {
+    const patch = settingsPatchSchema.parse(req.body);
+    const row = await getOrCreateStoreRow();
+    const currentSocial = { ...(row.social ?? {}) } as Record<string, string | undefined>;
+    for (const [k, v] of Object.entries(patch) as [string, unknown][]) {
+      if (k === "codEnabled") continue;
       if (v === undefined) continue;
-      if (v === "") delete merged[k];
-      else merged[k] = v;
+      const sv = v as string | undefined;
+      if (sv === "") delete currentSocial[k];
+      else currentSocial[k] = sv;
     }
-    const nextSocial = compactSocial(merged);
-    const [existing] = await db.select().from(storeSettings).where(eq(storeSettings.id, 1)).limit(1);
-    if (!existing) {
-      await db.insert(storeSettings).values({ id: 1, social: nextSocial, updatedAt: new Date() });
-    } else {
-      await db
-        .update(storeSettings)
-        .set({ social: nextSocial, updatedAt: new Date() })
-        .where(eq(storeSettings.id, 1));
-    }
-    res.json({ social: nextSocial });
+    const nextSocial = compactSocial(currentSocial);
+    const nextCod = patch.codEnabled !== undefined ? patch.codEnabled : row.codEnabled;
+
+    await db
+      .update(storeSettings)
+      .set({ social: nextSocial, codEnabled: nextCod, updatedAt: new Date() })
+      .where(eq(storeSettings.id, 1));
+
+    res.json({
+      social: nextSocial,
+      codEnabled: nextCod,
+      stripePaymentsEnabled: stripeConfigured(),
+    });
   } catch (err) {
     next(err);
   }
